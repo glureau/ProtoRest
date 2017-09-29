@@ -1,12 +1,9 @@
 package com.glureau.protorest_core
 
 import android.app.Application
+import io.reactivex.Observable
 
-open class ProtoRestApplication(val api : RestApi) : Application() {
-    fun <R : RestResult> table(results: List<R>) {
+open class ProtoRestApplication<T : RestApi>(val api: T) : Application() {
+    lateinit var setup: Map<String, () -> Observable<RestResult>>
 
-    }
-    fun <R : RestResult> details (result : R) {
-        result
-    }
 }
