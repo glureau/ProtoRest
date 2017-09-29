@@ -1,7 +1,5 @@
 package com.glureau.protorest_sample_github
 
-import android.app.Application
-import com.glureau.protorest_core.ProtoRestActivity
+import com.glureau.protorest_core.ProtoRestApplication
 
-class MainApplication : Application()
-class MainActivity : ProtoRestActivity()
+class MainApplication : ProtoRestApplication()
