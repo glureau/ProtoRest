@@ -1,0 +1,2 @@
+package com.glureau.protorest_core
+interface RestResult
