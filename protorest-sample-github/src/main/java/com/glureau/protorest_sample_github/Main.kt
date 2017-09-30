@@ -2,12 +2,13 @@ package com.glureau.protorest_sample_github
 
 import com.glureau.protorest_core.ProtoRestApplication
 import com.glureau.protorest_core.RestApi
+import com.glureau.protorest_core.RestFeature
 import java.nio.file.Path
 
 class MainApplication : ProtoRestApplication<GithubUserApi>(api = GithubUserApi()) {
     init {
-        setup = mapOf(
-                "User" to { api.userGlureau() }
+        setup = listOf(
+                RestFeature("User", { api.userGlureau() })
         )
     }
 }

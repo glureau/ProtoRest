@@ -1,2 +1,5 @@
 package com.glureau.protorest_core
-interface RestResult
+
+import org.json.JSONObject
+
+class RestResult(data : JSONObject)
