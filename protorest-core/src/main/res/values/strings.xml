@@ -20,4 +20,5 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="powered_by_powerrest">Powered by PowerRest</string>
 </resources>
