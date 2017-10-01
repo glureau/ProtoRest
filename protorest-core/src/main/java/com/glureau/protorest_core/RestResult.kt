@@ -1,5 +1,3 @@
 package com.glureau.protorest_core
 
-import org.json.JSONObject
-
-class RestResult(data : JSONObject)
+class RestResult<out T>(val data: T)
