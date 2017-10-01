@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         tools:text="variable_name"
         android:textColor="@color/textLabelColor"
-        android:textSize="12sp" />
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/simpleTextValue"
@@ -26,5 +26,5 @@
         android:paddingEnd="0dp"
         tools:text="Value"
         android:textColor="@color/textColor"
-        android:textSize="25sp" />
+        android:textSize="14sp" />
 </LinearLayout>

@@ -1,13 +1,21 @@
 package com.glureau.protorest_core
 
+import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Rfc3339DateJsonAdapter
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
+import java.util.*
 
 open class RestApi(val baseApi: String) {
-    val moshi: Moshi = Moshi.Builder().build()
+
+    val moshi: Moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+            .build()
+
     val client = OkHttpClient()
     fun <T> rest(path: String, clazz: Class<T>): Observable<RestResult<T>> =
             Observable.create<RestResult<T>> { s ->

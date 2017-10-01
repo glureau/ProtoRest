@@ -1,10 +1,8 @@
 package com.glureau.protorest_core.ui
 
 import android.app.Activity
-import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.glureau.protorest_core.R
 import com.glureau.protorest_core.RestFeature
 import com.glureau.protorest_core.RestResult
@@ -12,6 +10,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.simple_text.view.*
 import timber.log.Timber
+import java.util.*
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -20,8 +19,13 @@ import kotlin.reflect.jvm.jvmErasure
 class UiGenerator {
     companion object {
         val mapping = mapOf<KClass<*>, (Activity, KCallable<*>, RestResult<*>, ViewGroup) -> View>(
-                Long::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) } ,
-                String::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) }
+                Long::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) },
+                Int::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) },
+                Short::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) },
+                Double::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) },
+                Float::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) },
+                String::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) },
+                Date::class to { activity, mP, res, root -> createSimpleText(mP, res, activity, root) }
         )
 
         inline fun <reified T> generateViews(activity: Activity, feature: RestFeature<T>, root: ViewGroup): Observable<List<View>> {
@@ -29,9 +33,10 @@ class UiGenerator {
                     .observeOn(AndroidSchedulers.mainThread())
                     .map({ next ->
                         val views = mutableListOf<View>()
-                        Timber.i("Generate views for class %s", T::class.qualifiedName)
+                        Timber.i("Generate views for class %s (%s)", T::class.simpleName, T::class.qualifiedName)
                         for (memberProperty in T::class.members.filter { it is KProperty }) {
                             val mapper = mapping[memberProperty.returnType.jvmErasure] ?: continue
+                            Timber.i("Member %s", memberProperty.name)
                             views.add(mapper.invoke(activity, memberProperty, next, root))
                         }
                         Timber.i("Generated views %d", views.count())
