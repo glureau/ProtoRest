@@ -3,6 +3,7 @@ package com.glureau.protorest_core
 import android.app.Application
 import android.view.View
 import com.glureau.protorest_core.ui.UiGenerator
+import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Observable
 import timber.log.Timber
 
@@ -12,6 +13,12 @@ open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
     inline fun <reified T> generateViews(feature: RestFeature<T>): Observable<List<View>> = UiGenerator.generateViews(this, feature)
     override fun onCreate() {
         super.onCreate()
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return
+        }
+        LeakCanary.install(this)
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

@@ -40,6 +40,10 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.1.51'
     implementation 'com.squareup.moshi:moshi:1.5.0'
     implementation 'com.jakewharton.timber:timber:4.5.1'
+
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }
 
 repositories {
