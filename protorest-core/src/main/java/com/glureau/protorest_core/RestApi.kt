@@ -1,10 +1,10 @@
 package com.glureau.protorest_core
 
-import android.util.Log
 import com.squareup.moshi.Moshi
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import timber.log.Timber
 
 open class RestApi(val baseApi: String) {
     val moshi: Moshi = Moshi.Builder().build()
@@ -15,10 +15,11 @@ open class RestApi(val baseApi: String) {
                 try {
                     val response = client.newCall(req).execute()
                     val body = response.body()?.string()
-                    Log.e("RestApi", body)
+                    if (body != null)
+                    Timber.i("Receive response from server: %s", body)
                     val jsonAdapter = moshi.adapter(clazz).lenient()
                     val result = jsonAdapter.fromJson(body)
-                    Log.e("RestApi", result?.toString())
+                    Timber.i("Response parsed: %s", result)
                     if (result != null) {
                         s.onNext(RestResult(result))
                     }

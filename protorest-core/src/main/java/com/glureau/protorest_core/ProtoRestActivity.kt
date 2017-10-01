@@ -2,7 +2,6 @@ package com.glureau.protorest_core
 
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,11 +18,8 @@ class ProtoRestActivity : DefaultFeatureActivity() {
             val item = menu.add(0, feature.name.hashCode(), Menu.NONE, feature.name)
             item.setIcon(R.drawable.ic_menu_manage)
             item.setOnMenuItemClickListener {
-                Log.e("Activity", "menu clicked")
-
                 feature.generateViews()
                         .subscribe({ views ->
-                            Log.e("Activity", "get views : $views")
                             mainContent.removeAllViews()
                             views.reversed().forEach { mainContent.addView(it) }
                             mainContent.invalidate()
