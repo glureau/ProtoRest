@@ -19,10 +19,11 @@ class ProtoRestActivity : DefaultFeatureActivity() {
             val item = menu.add(0, feature.name.hashCode(), Menu.NONE, feature.name)
             item.setIcon(R.drawable.ic_menu_manage)
             item.setOnMenuItemClickListener {
+                Log.e("Activity", "menu clicked")
 
                 feature.generateViews()
                         .subscribe({ views ->
-                            Log.e("ADD-VIEW", it.toString())
+                            Log.e("Activity", "get views : $views")
                             mainContent.removeAllViews()
                             views.reversed().forEach { mainContent.addView(it) }
                             mainContent.invalidate()
