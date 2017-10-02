@@ -12,7 +12,7 @@ import timber.log.Timber
 
 open class ProtoRestApplication<out A : RestApi>(val api: A, val title: String = "ProtoRest") : Application() {
     lateinit var setup: List<RestFeatureGroup>
-    fun setup(vararg groups: RestFeatureGroup) = { setup = groups.toList()}
+    fun setup(vararg groups: RestFeatureGroup) { setup = groups.toList()}
     fun group(name:String, vararg features: RestFeature<*>) = RestFeatureGroup(name, features.toList())
     inline fun <reified T> feature(name: String, noinline action: () -> Observable<RestResult<T>>) = RestFeature(name, action, { a, f:RestFeature<T>, r -> this.generateViews(a, f, r) })
 
