@@ -4,6 +4,7 @@ import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Rfc3339DateJsonAdapter
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
@@ -17,7 +18,7 @@ open class RestApi(val baseApi: String) {
             .build()
 
     val client = OkHttpClient()
-    fun <T> rest(path: String, clazz: Class<T>): Observable<RestResult<T>> =
+    fun <T> get(path: String, clazz: Class<T>): Observable<RestResult<T>> =
             Observable.create<RestResult<T>> { s ->
                 val req = Request.Builder().url(baseApi + path).build()
                 try {
@@ -35,5 +36,5 @@ open class RestApi(val baseApi: String) {
                 } catch (t: Throwable) {
                     s.onError(t)
                 }
-            }
+            }.subscribeOn(Schedulers.io())
 }

@@ -37,10 +37,14 @@ class ProtoRestActivity : DefaultFeatureActivity() {
                 item.setIcon(R.drawable.account)
                 item.setOnMenuItemClickListener {
                     feature.generateViews(this, mainContent)
-                            .doOnSubscribe { bar_title.text = "${root.title} / ${featureGroup.name} / ${feature.name}" }
+                            .doOnSubscribe {
+                                bar_title.text = "${root.title} / ${featureGroup.name} / ${feature.name}"
+                                loading.visibility = View.VISIBLE
+                            }
                             .subscribe({ views ->
                                 mainContent.removeAllViews()
                                 views.reversed().forEach { mainContent.addView(it) }
+                                loading.visibility = View.INVISIBLE
                                 mainContent.invalidate()
                             })
 
