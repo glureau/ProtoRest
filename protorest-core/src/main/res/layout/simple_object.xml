@@ -4,27 +4,26 @@
     android:id="@+id/mainContent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/fieldBackground2"
+    android:background="@color/fieldBackground"
     android:orientation="vertical"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp"
-    android:paddingBottom="10dp">
+    android:paddingBottom="10dp"
+    android:paddingEnd="10dp"
+    android:paddingStart="10dp">
 
     <TextView
-        android:id="@+id/simpleTextLabel2"
+        android:id="@+id/simpleObjectLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="variable_name"
         android:textColor="@color/textLabelColor"
-        android:textSize="8sp" />
+        android:textSize="12sp"
+        tools:text="variable_name" />
 
-    <TextView
-        android:id="@+id/simpleTextValue2"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/simpleObjectContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="5dp"
+        android:background="@color/subFieldBackground"
+        android:orientation="vertical"
         android:paddingEnd="0dp"
-        tools:text="Value"
-        android:textColor="@color/textColor"
-        android:textSize="10sp" />
+        android:paddingStart="2dp" />
 </LinearLayout>
