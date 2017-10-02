@@ -20,29 +20,33 @@ class ProtoRestActivity : DefaultFeatureActivity() {
         bar_title.text = root.title
 
         // Only to update once the nav_header title...
-        drawer_layout.addDrawerListener(object: DrawerLayout.DrawerListener {
-            override fun onDrawerStateChanged(newState: Int) { }
-            override fun onDrawerSlide(drawerView: View?, slideOffset: Float) { }
-            override fun onDrawerClosed(drawerView: View?) { }
-            override fun onDrawerOpened(drawerView: View?) { nav_header_title.text = root.title }
+        drawer_layout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerStateChanged(newState: Int) {}
+            override fun onDrawerSlide(drawerView: View?, slideOffset: Float) {}
+            override fun onDrawerClosed(drawerView: View?) {}
+            override fun onDrawerOpened(drawerView: View?) {
+                nav_header_title.text = root.title
+            }
         })
 
         val menu = nav_view.menu
-        for (feature in root.setup) {
-            val item = menu.add(0, feature.name.hashCode(), Menu.NONE, feature.name)
-            item.setIcon(R.drawable.ic_menu_manage)
-            item.setOnMenuItemClickListener {
+        for (featureGroup in root.setup) {
+            val subMenu = menu.addSubMenu(0, featureGroup.name.hashCode(), Menu.NONE, featureGroup.name)
+            for (feature in featureGroup.features) {
+                val item = subMenu.add(0, feature.name.hashCode(), Menu.NONE, featureGroup.name + " / " +feature.name)
+                item.setIcon(R.drawable.account)
+                item.setOnMenuItemClickListener {
+                    feature.generateViews(this, mainContent)
+                            .doOnSubscribe { bar_title.text = "${root.title} / ${featureGroup.name} / ${feature.name}" }
+                            .subscribe({ views ->
+                                mainContent.removeAllViews()
+                                views.reversed().forEach { mainContent.addView(it) }
+                                mainContent.invalidate()
+                            })
 
-                feature.generateViews(this, mainContent)
-                        .doOnSubscribe { bar_title.text = "${root.title} / ${feature.name}" }
-                        .subscribe({ views ->
-                            mainContent.removeAllViews()
-                            views.reversed().forEach { mainContent.addView(it) }
-                            mainContent.invalidate()
-                        })
-
-                drawer_layout.closeDrawer(GravityCompat.START)
-                true
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    true
+                }
             }
         }
     }

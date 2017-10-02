@@ -13,3 +13,5 @@ class RestFeature<T>(val name: String,
 
     fun observable(): Observable<RestResult<T>> = action.invoke().subscribeOn(Schedulers.io())
 }
+
+class RestFeatureGroup(val name: String, val features: List<RestFeature<*>>)

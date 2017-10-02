@@ -11,7 +11,7 @@ import timber.log.Timber
 
 
 open class ProtoRestApplication<out A : RestApi>(val api: A, val title: String = "ProtoRest") : Application() {
-    lateinit var setup: List<RestFeature<*>>
+    lateinit var setup: List<RestFeatureGroup>
     inline fun <reified T> generateViews(activity: Activity, feature: RestFeature<T>, root : ViewGroup): Observable<List<View>> = UiGenerator.generateViews(activity, feature, root)
     override fun onCreate() {
         super.onCreate()
