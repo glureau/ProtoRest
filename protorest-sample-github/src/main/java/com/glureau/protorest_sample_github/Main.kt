@@ -18,7 +18,7 @@ class MainApplication : ProtoRestApplication<GithubUserApi>(title = "Github-API"
                         feature("square (simple)", { api.organizationSimple("square") }),
                         feature("betomorrow (simple)", { api.organizationSimple("betomorrow") })
                 ),
-                group("Organization",
+                group("Repos",
                         feature("ProtoRest (full)", { api.repository("glureau", "protorest") }),
                         feature("ProtoRest (simple)", { api.repositorySimple("glureau", "protorest") })
                 )

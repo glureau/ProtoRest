@@ -43,7 +43,7 @@ class ProtoRestActivity : DefaultFeatureActivity() {
                             }
                             .subscribe({ views ->
                                 mainContent.removeAllViews()
-                                views.reversed().forEach { mainContent.addView(it) }
+                                views.forEach { mainContent.addView(it) }
                                 loading.visibility = View.INVISIBLE
                                 mainContent.invalidate()
                             })
