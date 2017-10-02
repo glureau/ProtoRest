@@ -1,14 +1,19 @@
 package com.glureau.protorest_core.ui
 
 import android.app.Activity
+import android.graphics.Bitmap
+import android.media.Image
 import android.view.View
 import android.view.ViewGroup
 import com.glureau.protorest_core.R
+import com.glureau.protorest_core.RestApi
 import com.glureau.protorest_core.RestFeature
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.simple_image.view.*
 import kotlinx.android.synthetic.main.simple_object.view.*
 import kotlinx.android.synthetic.main.simple_text.view.*
+import okhttp3.OkHttpClient
 import timber.log.Timber
 import java.util.*
 import kotlin.reflect.KCallable
@@ -18,6 +23,7 @@ import kotlin.reflect.jvm.jvmErasure
 
 class UiGenerator {
     companion object {
+        val client = OkHttpClient()
         val mapping = mapOf<KClass<*>, (Activity, String, Any, ViewGroup) -> View>(
                 // Numbers
                 Double::class to { activity, name, res, root -> createSimpleText(name, res, activity, root) },
@@ -27,10 +33,14 @@ class UiGenerator {
                 Short::class to { activity, name, res, root -> createSimpleText(name, res, activity, root) },
                 Byte::class to { activity, name, res, root -> createSimpleText(name, res, activity, root) },
 
-                String::class to { activity, name, res, root -> createSimpleText(name, res, activity, root) },
+                String::class to { activity, name, res, root -> createSimpleText(name, res as String, activity, root) },
                 Boolean::class to { activity, name, res, root -> createSimpleText(name, res, activity, root) },
-                Date::class to { activity, name, res, root -> createSimpleText(name, res, activity, root) }
+                Date::class to { activity, name, res, root -> createSimpleText(name, res, activity, root) },
+
+                // Custom
+                RestApi.Image::class to { activity, name, res, root -> createSimpleImage(name, (res as RestApi.Image).bitmap, activity, root) }
         )
+
 
         fun <T : Any> generateViews(activity: Activity, feature: RestFeature<T>, root: ViewGroup): Observable<List<View>> {
             return feature.observable()
@@ -72,6 +82,12 @@ class UiGenerator {
     }
 }
 
+@PublishedApi internal fun layout(activity: Activity, name: String, root: ViewGroup): Pair<View, ViewGroup> {
+    val newView = activity.layoutInflater.inflate(R.layout.simple_object, root, false)
+    newView.simpleObjectLabel.text = name
+    return newView to newView.simpleObjectContainer
+}
+
 @PublishedApi internal fun <T> createSimpleText(name: String, data: T, activity: Activity, root: ViewGroup): View {
     val result = data.toString()
     val newView = activity.layoutInflater.inflate(R.layout.simple_text, root, false)
@@ -80,8 +96,10 @@ class UiGenerator {
     return newView
 }
 
-@PublishedApi internal fun layout(activity: Activity, name: String, root: ViewGroup): Pair<View, ViewGroup> {
-    val newView = activity.layoutInflater.inflate(R.layout.simple_object, root, false)
-    newView.simpleObjectLabel.text = name
-    return newView to newView.simpleObjectContainer
+@PublishedApi internal fun createSimpleImage(name: String, bitmap: Bitmap, activity: Activity, root: ViewGroup): View {
+    val newView = activity.layoutInflater.inflate(R.layout.simple_image, root, false)
+    newView.simpleImageLabel.text = name
+    newView.simpleImageValue.setImageBitmap(bitmap)
+    return newView
 }
+
