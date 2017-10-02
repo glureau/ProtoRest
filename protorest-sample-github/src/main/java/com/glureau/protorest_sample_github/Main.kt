@@ -2,33 +2,33 @@ package com.glureau.protorest_sample_github
 
 import com.glureau.protorest_core.ProtoRestApplication
 import com.glureau.protorest_core.RestApi
-import com.glureau.protorest_core.RestFeature
-import com.glureau.protorest_core.RestFeatureGroup
 import java.util.*
 
 class MainApplication : ProtoRestApplication<GithubUserApi>(title = "Github-API", api = GithubUserApi()) {
     init {
-        setup = listOf(
-                RestFeatureGroup("User", listOf(
-                        RestFeature("glureau (full)", { api.user("glureau") }, { a, f, r -> this.generateViews(a, f, r) }),
-                        RestFeature("glureau (simple)", { api.userSimple("glureau") }, { a, f, r -> this.generateViews(a, f, r) }),
-                        RestFeature("jakewharton (simple)", { api.userSimple("jakewharton") }, { a, f, r -> this.generateViews(a, f, r) }),
-                        RestFeature("swankjesse (simple)", { api.userSimple("swankjesse") }, { a, f, r -> this.generateViews(a, f, r) }))),
-                RestFeatureGroup("Organization", listOf(
-                        RestFeature("square (full)", { api.organization("square") }, { a, f, r -> this.generateViews(a, f, r) }),
-                        RestFeature("square (simple)", { api.organizationSimple("square") }, { a, f, r -> this.generateViews(a, f, r) }),
-                        RestFeature("betomorrow (simple)", { api.organizationSimple("betomorrow") }, { a, f, r -> this.generateViews(a, f, r) })
-                )),
-                RestFeatureGroup("Organization", listOf(
-                        RestFeature("ProtoRest (full)", { api.repository("glureau", "protorest") }, { a, f, r -> this.generateViews(a, f, r) }),
-                        RestFeature("ProtoRest (simple)", { api.repositorySimple("glureau", "protorest") }, { a, f, r -> this.generateViews(a, f, r) })
-                ))
+        setup(
+                group("User",
+                        feature("glureau (full)", { api.user("glureau") }),
+                        feature("glureau (simple)", { api.userSimple("glureau") }),
+                        feature("jakewharton (simple)", { api.userSimple("jakewharton") }),
+                        feature("swankjesse (simple)", { api.userSimple("swankjesse") })),
+                group("Organization",
+                        feature("square (full)", { api.organization("square") }),
+                        feature("square (simple)", { api.organizationSimple("square") }),
+                        feature("betomorrow (simple)", { api.organizationSimple("betomorrow") })
+                ),
+                group("Organization",
+                        feature("ProtoRest (full)", { api.repository("glureau", "protorest") }),
+                        feature("ProtoRest (simple)", { api.repositorySimple("glureau", "protorest") })
+                )
         )
     }
 }
+
 // This is just an example based on a couple of result.
 // This is NOT a clean github implementation.
 data class SimpleGithubUser(val login: String?, val avatar_url: String?, val url: String?, val name: String?, val company: String?, val email: String?, val followers: Int?, val following: Int?)
+
 data class GithubUser(val login: String?, val id: Long?, val avatar_url: String?, val gravatar_id: String?, val url: String?, val html_url: String?, val followers_url: String?, val following_url: String?, val gists_url: String?, val starred_url: String?, val subscriptions_url: String?, val organizations_url: String?, val repos_url: String?, val events_url: String?, val received_events_url: String?, val type: String?, val site_admin: Boolean?, val name: String?, val company: String?, val blog: String?, val location: String?, val email: String?, val hireable: String?, val bio: String?, val public_repos: Int?, val public_gists: Int?, val followers: Int?, val following: Int?, val created_at: Date?, val updated_at: Date?)
 data class SimpleGithubOrganization(val url: String?, val repos_url: String?, val avatar_url: String?, val description: String?, val name: String?, val html_url: String?)
 data class GithubOrganization(val login: String?, val id: Long?, val url: String?, val repos_url: String?, val events_url: String?, val hooks_url: String?, val issues_url: String?, val members_url: String?, val public_members_url: String?, val avatar_url: String?, val description: String?, val name: String?, val company: String?, val blog: String?, val location: String?, val email: String?, val has_organization_projects: Boolean?, val has_repository_projects: Boolean?, val public_repos: Int?, val public_gists: Int?, val followers: Int?, val following: Int?, val html_url: String?, val created_at: Date?, val updated_at: Date?, val type: String?)

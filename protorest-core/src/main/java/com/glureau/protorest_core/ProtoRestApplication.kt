@@ -12,7 +12,12 @@ import timber.log.Timber
 
 open class ProtoRestApplication<out A : RestApi>(val api: A, val title: String = "ProtoRest") : Application() {
     lateinit var setup: List<RestFeatureGroup>
+    fun setup(vararg groups: RestFeatureGroup) = { setup = groups.toList()}
+    fun group(name:String, vararg features: RestFeature<*>) = RestFeatureGroup(name, features.toList())
+    inline fun <reified T> feature(name: String, noinline action: () -> Observable<RestResult<T>>) = RestFeature(name, action, { a, f:RestFeature<T>, r -> this.generateViews(a, f, r) })
+
     inline fun <reified T> generateViews(activity: Activity, feature: RestFeature<T>, root : ViewGroup): Observable<List<View>> = UiGenerator.generateViews(activity, feature, root)
+
     override fun onCreate() {
         super.onCreate()
         if (LeakCanary.isInAnalyzerProcess(this)) {
