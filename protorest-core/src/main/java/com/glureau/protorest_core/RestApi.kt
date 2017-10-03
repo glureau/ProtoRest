@@ -1,14 +1,17 @@
 package com.glureau.protorest_core
 
-import android.graphics.BitmapFactory
 import com.glureau.protorest_core.network.RestNetworkClient
-import com.squareup.moshi.*
+import com.squareup.moshi.KotlinJsonAdapterFactory
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Rfc3339DateJsonAdapter
 import io.reactivex.Observable
 import timber.log.Timber
 import java.util.*
 
 open class RestApi(val baseApi: String) {
 
+    @Retention(AnnotationRetention.RUNTIME)
+    @Target(AnnotationTarget.FIELD)
     annotation class Image
 
     val moshi: Moshi = Moshi.Builder()
@@ -16,7 +19,7 @@ open class RestApi(val baseApi: String) {
             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
             .build()
 
-    fun <T> get(path: String, clazz: Class<T>): Observable<RestResult<T>> =
+    inline fun <reified T> get(path: String, clazz: Class<T>): Observable<RestResult<T>> =
             RestNetworkClient.get(baseApi + path)
                     .map { response ->
                         val body = response.body()?.string()
@@ -28,16 +31,9 @@ open class RestApi(val baseApi: String) {
                         if (result == null) {
                             error("Unable to parse")
                         } else {
-                            enhance(result)
                             RestResult(result)
                         }
                     }
 
-    private fun <T> enhance(result: T) {
-        result::class.members
-        RestNetworkClient.get(path)
-                .subscribe {
-                    bitmap = BitmapFactory.decodeStream(it.body()?.byteStream())
-                }
-    }
+
 }

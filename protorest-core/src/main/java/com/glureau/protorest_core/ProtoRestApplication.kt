@@ -1,9 +1,6 @@
 package com.glureau.protorest_core
 
-import android.app.Activity
 import android.app.Application
-import android.view.View
-import android.view.ViewGroup
 import com.glureau.protorest_core.ui.UiGenerator
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Observable
@@ -12,11 +9,12 @@ import timber.log.Timber
 
 open class ProtoRestApplication<out A : RestApi>(val api: A, val title: String = "ProtoRest") : Application() {
     lateinit var setup: List<RestFeatureGroup>
-    fun setup(vararg groups: RestFeatureGroup) { setup = groups.toList()}
-    fun group(name:String, vararg features: RestFeature<*>) = RestFeatureGroup(name, features.toList())
-    fun <T: Any> feature(name: String, action: () -> Observable<RestResult<T>>) = RestFeature(name, action, { a, f:RestFeature<T>, r -> this.generateViews(a, f, r) })
+    fun setup(vararg groups: RestFeatureGroup) {
+        setup = groups.toList()
+    }
 
-    @PublishedApi internal fun <T: Any> generateViews(activity: Activity, feature: RestFeature<T>, root : ViewGroup): Observable<List<View>> = UiGenerator.generateViews(activity, feature, root)
+    fun group(name: String, vararg features: RestFeature<*>) = RestFeatureGroup(name, features.toList())
+    fun <T : Any> feature(name: String, action: () -> Observable<RestResult<T>>) = RestFeature(name, action, { a, f: RestFeature<T>, r -> UiGenerator.generateViews(a, f, r) })
 
     override fun onCreate() {
         super.onCreate()
