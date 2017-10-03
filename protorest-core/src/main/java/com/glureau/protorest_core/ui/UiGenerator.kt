@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.glureau.protorest_core.R
 import com.glureau.protorest_core.RestApi
 import com.glureau.protorest_core.RestFeature
-import com.glureau.protorest_core.RestResult
 import com.glureau.protorest_core.network.RestNetworkClient
 import com.glureau.protorest_core.reflection.Reflection
 import io.reactivex.Observable
@@ -27,18 +26,18 @@ import kotlin.reflect.jvm.jvmErasure
 class UiGenerator {
     companion object {
 
-        val mapping = listOf<Pair<(KClass<*>, Array<out Annotation>?) -> Boolean, (Activity, String, Any, ViewGroup, Map<String, Any>) -> View>>(
+        val mapping = listOf<Pair<(KClass<*>, Array<out Annotation>?) -> Boolean, (Activity, String, Any, ViewGroup, Map<Any, Any>) -> View>>(
                 { kClass: KClass<*>, _: Array<out Annotation>? -> kClass.isSubclassOf(Number::class) } to { activity, name, res, root, _ -> createSimpleText(name, res, activity, root) },
                 { kClass: KClass<*>, _: Array<out Annotation>? -> kClass == Boolean::class } to { activity, name, res, root, _ -> createSimpleText(name, res, activity, root) },
                 { kClass: KClass<*>, _: Array<out Annotation>? -> kClass == Date::class } to { activity, name, res, root, _ -> createSimpleText(name, res, activity, root) },
-                { _: KClass<*>, annotations: Array<out Annotation>? -> hasAnnotation(annotations, RestApi.Image::class) } to { activity, name, res, root, enhancements -> createSimpleImage(name, enhancements, activity, root) },
+                { _: KClass<*>, annotations: Array<out Annotation>? -> hasAnnotation(annotations, RestApi.Image::class) } to { activity, name, res, root, enhancements -> createSimpleImage(name, res, enhancements, activity, root) },
                 { kClass: KClass<*>, _: Array<out Annotation>? -> kClass == String::class } to { activity, name, res, root, _ -> createSimpleText(name, res, activity, root) }
         )
 
         private fun annotations(kClass: KClass<*>, kCallable: KCallable<*>) = kClass.java.declaredFields.firstOrNull { it.name == kCallable.name }?.annotations
         private fun hasAnnotation(annotations: Array<out Annotation>?, kClass: KClass<out Annotation>) = annotations?.firstOrNull { it.annotationClass == kClass } != null
 
-        private fun mapper(kClass: KClass<*>, kCallable: KCallable<*>): ((Activity, String, Any, ViewGroup, Map<String, Any>) -> View)? {
+        private fun mapper(kClass: KClass<*>, kCallable: KCallable<*>): ((Activity, String, Any, ViewGroup, Map<Any, Any>) -> View)? {
             return mapping.firstOrNull { it.first.invoke(kCallable.returnType.jvmErasure, annotations(kClass, kCallable)) }?.second
         }
 
@@ -47,24 +46,29 @@ class UiGenerator {
                     .observeOn(AndroidSchedulers.mainThread())
                     .map { next ->
                         val dataClass = next.data.javaClass.kotlin
-                        enhance(next, dataClass)
-                        generateViewsRecursively<T>(activity, next.data, next.enhancements, dataClass, root)
+                        generateViewsRecursively(activity, next.data, enhance(next.data, dataClass), dataClass, root)
                     }
         }
 
-        @PublishedApi internal fun <T> enhance(restResult: RestResult<T>, dataClass: KClass<*>): RestResult<T> {
+        @PublishedApi internal fun <T> enhance(data: T, dataClass: KClass<*>): MutableMap<Any, Any> {
+            val enhancements: MutableMap<Any, Any> = mutableMapOf()
             for (memberProperty in Reflection.properties(dataClass)) {
+                val value = memberProperty.call(data) ?: continue // No value => No enhancements
                 if (hasAnnotation(annotations(dataClass, memberProperty), RestApi.Image::class)) {
-                    val value = memberProperty.call(restResult.data) as? String ?: error("@Image should be used on String only")
-                    restResult.enhancements.put(memberProperty.name, RestNetworkClient.get(value)
+                    value as? String ?: error("@Image should be used on String only")
+                    enhancements.put(value, RestNetworkClient.get(value)
                             .observeOn(Schedulers.computation())
                             .map { BitmapFactory.decodeStream(it.body()?.byteStream()) })
                 }
+
+                if (!value.javaClass.isPrimitive) {
+                    enhancements.putAll(enhance(value, value::class))
+                }
             }
-            return restResult
+            return enhancements
         }
 
-        @PublishedApi internal fun <T> generateViewsRecursively(activity: Activity, data: T, enhancements: MutableMap<String, Any>, dataType: KClass<*>, root: ViewGroup): MutableList<View> {
+        @PublishedApi internal fun <T> generateViewsRecursively(activity: Activity, data: T, enhancements: MutableMap<Any, Any>, dataType: KClass<*>, root: ViewGroup): MutableList<View> {
             val views = mutableListOf<View>()
             Timber.i("Generate root views for class %s (%s)", dataType.simpleName, dataType.qualifiedName)
             for (memberProperty in Reflection.properties(dataType)) {
@@ -108,15 +112,18 @@ class UiGenerator {
     return newView
 }
 
-@PublishedApi internal fun createSimpleImage(name: String, enhancements: Map<String, Any>, activity: Activity, root: ViewGroup): View {
+@PublishedApi internal fun createSimpleImage(name: String, data: Any, enhancements: Map<Any, Any>, activity: Activity, root: ViewGroup): View {
     val newView = activity.layoutInflater.inflate(R.layout.simple_image, root, false)
     newView.simpleImageLabel.text = name
-    (enhancements[name] as Observable<Bitmap>)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                // TODO : Check the view, it could have disappear when we receive the Bitmap
-                newView.simpleImageValue.setImageBitmap(it)
-            }
+    val obs = enhancements[data]
+    if (obs != null) {
+        (obs as Observable<Bitmap>)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    // TODO : Check the view, it could have disappear when we receive the Bitmap
+                    newView.simpleImageValue.setImageBitmap(it)
+                }
+    }
     return newView
 }
 
