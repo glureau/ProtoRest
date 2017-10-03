@@ -13,4 +13,7 @@ object Reflection {
             return listOf()
         }
     }
+    fun annotations(kClass: KClass<*>, kCallable: KCallable<*>) = kClass.java.declaredFields.firstOrNull { it.name == kCallable.name }?.annotations
+    fun hasAnnotation(annotations: Array<out Annotation>?, kClass: KClass<out Annotation>) = annotations?.firstOrNull { it.annotationClass == kClass } != null
+
 }
