@@ -49,7 +49,7 @@ object UiGenerator {
     @PublishedApi internal fun <T> generateAdditionalData(data: T, dataClass: KClass<*>): MutableMap<Any, Any> {
         val enhancements: MutableMap<Any, Any> = mutableMapOf()
         for (memberProperty in Reflection.properties(dataClass)) {
-            val value = memberProperty.call(data) ?: continue // No value => No enhancements
+            val value = memberProperty.call(data) ?: continue
             if (Reflection.hasAnnotation(Reflection.annotations(dataClass, memberProperty), RestApi.Image::class)) {
                 value as? String ?: error("@Image should be used on String only")
                 enhancements.put(value, RestNetworkClient.get(value)
@@ -57,7 +57,7 @@ object UiGenerator {
                         .map { BitmapFactory.decodeStream(it.body()?.byteStream()) })
             }
 
-            if (!value.javaClass.isPrimitive && value::class !is Date) {
+            if (!value.javaClass.isPrimitive && value !is Date) {
                 enhancements.putAll(generateAdditionalData(value, value::class))
             }
         }
@@ -68,10 +68,14 @@ object UiGenerator {
         val views = mutableListOf<View>()
         Timber.i("Generate root views for class %s (%s)", dataType.simpleName, dataType.qualifiedName)
         for (memberProperty in Reflection.properties(dataType)) {
-            val value = getValue(memberProperty, data) ?: continue // Ignore null value
+            val value = memberProperty.call(data)
+            if (value == null) {
+                Timber.w("Null value is ignored: %s", memberProperty.name)
+                continue
+            }
             val specificGenerator = getSpecificGenerator(dataType, memberProperty)
             if (specificGenerator == null) {
-                Timber.w("Member without getSpecificGenerator '%s' of class %s", memberProperty.name, memberProperty.returnType.jvmErasure)
+                Timber.w("Member without ui generator '%s' of class %s", memberProperty.name, memberProperty.returnType.jvmErasure)
                 val (containerView, container) = layout(activity, memberProperty.name, root)
                 generateViewsRecursively(activity, value, additionalData, memberProperty.returnType.jvmErasure, container).forEach { container.addView(it) }
                 views.add(containerView)
@@ -82,14 +86,6 @@ object UiGenerator {
         }
         Timber.i("Generated views %d", views.count())
         return views
-    }
-
-    @PublishedApi internal fun <T> getValue(memberProperty: KCallable<*>, target: T): Any? {
-        val value = memberProperty.call(target)
-        if (value == null) {
-            Timber.w("Null value is ignored: %s", memberProperty.name)
-        }
-        return value
     }
 }
 
