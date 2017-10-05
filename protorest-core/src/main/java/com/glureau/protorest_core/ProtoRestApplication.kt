@@ -3,6 +3,7 @@ package com.glureau.protorest_core
 import android.app.Application
 import com.glureau.protorest_core.ui.UiGenerator
 import com.squareup.leakcanary.LeakCanary
+import com.squareup.moshi.JsonAdapter
 import io.reactivex.Observable
 import timber.log.Timber
 
@@ -28,4 +29,9 @@ open class ProtoRestApplication<out A : RestApi>(val api: A, val title: String =
             Timber.plant(Timber.DebugTree())
         }
     }
+
+    private fun <T> addDataAdapter(adapter: JsonAdapter<T>) {
+
+    }
+
 }

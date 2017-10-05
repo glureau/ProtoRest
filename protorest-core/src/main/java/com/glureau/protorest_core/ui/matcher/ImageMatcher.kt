@@ -5,5 +5,5 @@ import com.glureau.protorest_core.reflection.Reflection
 import kotlin.reflect.KClass
 
 object ImageMatcher : TypeMatcher {
-    override fun match(kClass: KClass<*>, annotations: Array<out Annotation>?) = Reflection.hasAnnotation(annotations, RestApi.Image::class)
+    override fun match(kClass: KClass<*>, annotations: Array<out Annotation>?) = kClass.java == String::class.java && Reflection.hasAnnotation(annotations, RestApi.Image::class)
 }

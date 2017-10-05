@@ -6,11 +6,11 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "com.glureau.protorest_sample_github"
+        applicationId 'com.glureau.protorest_sample_dogs'
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
     }
 
     buildTypes {
@@ -28,4 +28,5 @@ dependencies {
     implementation project(':protorest-core')
     implementation 'io.reactivex.rxjava2:rxkotlin:2.0.0'
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.1.51'
+    implementation 'com.squareup.moshi:moshi:1.5.0'
 }
