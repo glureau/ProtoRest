@@ -21,8 +21,7 @@ class MainApplication : ProtoRestApplication<DogApi>(title = "Dog API", api = Do
     }
 }
 
-data class BreedList(val message: List<String>)
-
+data class BreedList(val message: StringArray)
 data class PictureList(@RestApi.Image val message: StringArray)
 
 class DogApi : RestApi("https://dog.ceo/api/") {

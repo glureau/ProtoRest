@@ -26,11 +26,14 @@ object UiGenerator {
             ImageListMatcher to SimpleImageListGenerator,
             ImageMatcher to SimpleImageGenerator,
             StringMatcher to SimpleTextGenerator,
-            StringListMatcher to SimpleTextListGenerator
+            StringListMatcher to SimpleTextListGenerator,
+            NumberListMatcher to SimpleTextListGenerator,
+            AnythingMatcher to SimpleTextGenerator
     )
 
-    private fun getSpecificGenerator(kClass: KClass<*>, kCallable: KCallable<*>): UiGenerator? {
-        return mapping.firstOrNull { it.first.match(kCallable.returnType.jvmErasure, Reflection.annotations(kClass, kCallable)) }?.second
+    private fun getSpecificGenerator(kClass: KClass<*>, kCallable: KCallable<*>): UiGenerator<Any>? {
+        // TODO: fix this 'Unchecked cast' with a more elegant generics management.
+        return mapping.firstOrNull { it.first.match(kCallable.returnType.jvmErasure, Reflection.annotations(kClass, kCallable)) }?.second as UiGenerator<Any>?
     }
 
     fun <T : Any> generateViews(activity: Activity, feature: RestFeature<T>, root: ViewGroup): Observable<List<View>> {
@@ -38,34 +41,11 @@ object UiGenerator {
                 .observeOn(AndroidSchedulers.mainThread())
                 .map { next ->
                     val dataClass = next.data.javaClass.kotlin
-                    generateViewsRecursively(activity, next.data, /*generateAdditionalData(next.data, dataClass), */dataClass, root)
+                    generateViewsRecursively(activity, next.data, dataClass, root)
                 }
     }
-//
-//    @PublishedApi internal fun <T> generateAdditionalData(data: T, dataClass: KClass<*>): MutableMap<Any, Any> {
-//        val enhancements: MutableMap<Any, Any> = mutableMapOf()
-//        for (memberProperty in Reflection.properties(dataClass)) {
-//            val value = memberProperty.call(data) ?: continue
-//            if (value is Collection<*> && Reflection.hasAnnotation(Reflection.annotations(dataClass, memberProperty), RestApi.Image::class)) {
-//                value.filterIsInstance<String>()
-//                        .forEach { elem ->
-//                            enhancements.put(value, prepareImageLoading(elem))
-//                        }
-//            } else if (Reflection.hasAnnotation(Reflection.annotations(dataClass, memberProperty), RestApi.Image::class)) {
-//                value as? String ?: error("@Image should be used on String only")
-//                enhancements.put(value, prepareImageLoading(value))
-//            } else if (!value.javaClass.isPrimitive && value !is Date) {
-//                enhancements.putAll(generateAdditionalData(value, value::class))
-//            }
-//        }
-//        return enhancements
-//    }
-//
-//    private fun prepareImageLoading(url: String) = RestNetworkClient.get(url)
-//            .observeOn(Schedulers.computation())
-//            .map { BitmapFactory.decodeStream(it.body()?.byteStream()) }
 
-    @PublishedApi internal fun <T> generateViewsRecursively(activity: Activity, data: T, /*additionalData: MutableMap<Any, Any>, */dataType: KClass<*>, root: ViewGroup): MutableList<View> {
+    @PublishedApi internal fun <T> generateViewsRecursively(activity: Activity, data: T, dataType: KClass<*>, root: ViewGroup): MutableList<View> {
         val views = mutableListOf<View>()
         Timber.i("Generate root views for class %s (%s)", dataType.simpleName, dataType.qualifiedName)
         for (memberProperty in Reflection.properties(dataType)) {
@@ -83,22 +63,19 @@ object UiGenerator {
                         val elemUiGenerator = getSpecificGenerator(elem::class, memberProperty)
                         if (elemUiGenerator == null) {
                             TODO("Check this configuration (need mock server now :) )")
-                            Timber.w("Member without ui generator in '%s' of class %s", memberProperty.name, memberProperty.returnType.jvmErasure)
-                            generateViewsRecursively(activity, elem, /*additionalData, */memberProperty.returnType.jvmErasure, container).forEach { container.addView(it) }
-                            views.add(containerView)
                         } else {
                             Timber.i("Member %s", memberProperty.name)
-                            views.add(elemUiGenerator.generate(activity, memberProperty.name, value, root/*, additionalData*/))
+                            views.add(elemUiGenerator.generate(activity, memberProperty.name, value, root))
                         }
                     }
                 } else {
                     Timber.w("Member without ui generator '%s' of class %s", memberProperty.name, memberProperty.returnType.jvmErasure)
-                    generateViewsRecursively(activity, value, /*additionalData, */memberProperty.returnType.jvmErasure, container).forEach { container.addView(it) }
+                    generateViewsRecursively(activity, value, memberProperty.returnType.jvmErasure, container).forEach { container.addView(it) }
                     views.add(containerView)
                 }
             } else {
                 Timber.i("Member %s", memberProperty.name)
-                views.add(specificGenerator.generate(activity, memberProperty.name, value, root/*, additionalData*/))
+                views.add(specificGenerator.generate(activity, memberProperty.name, value, root))
             }
         }
         Timber.i("Generated views %d", views.count())

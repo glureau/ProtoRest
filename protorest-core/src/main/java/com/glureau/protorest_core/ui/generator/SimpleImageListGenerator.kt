@@ -9,12 +9,11 @@ import com.glureau.protorest_core.R
 import com.glureau.protorest_core.StringArray
 import kotlinx.android.synthetic.main.simple_object.view.*
 
-object SimpleImageListGenerator : UiGenerator {
-    override fun generate(activity: Activity, name: String, data: Any, root: ViewGroup/*, additionalData: Map<Any, Any>*/): View {
+object SimpleImageListGenerator : UiGenerator<StringArray> {
+    override fun generate(activity: Activity, name: String, data: StringArray, root: ViewGroup): View {
         val newView = activity.layoutInflater.inflate(R.layout.simple_object, root, false)
         newView.simpleObjectLabel.text = name
-        val urls = data as StringArray // TODO : Use generics
-        urls.forEach {
+        data.forEach {
             val view = ImageView(activity)
             newView.simpleObjectContainer.addView(view)
             Glide.with(activity).asBitmap().load(it).into(view)

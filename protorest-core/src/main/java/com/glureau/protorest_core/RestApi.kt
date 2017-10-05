@@ -26,7 +26,7 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
         moshi = builder.build()
     }
 
-    inline fun <reified T> get(path: String, clazz: Class<T>): Observable<RestResult<T>> =
+    fun <T> get(path: String, clazz: Class<T>): Observable<RestResult<T>> =
             RestNetworkClient.get(baseApi + path)
                     .map { response ->
                         val body = response.body()?.string()
