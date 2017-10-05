@@ -44,9 +44,15 @@ dependencies {
     implementation 'com.squareup.moshi:moshi-adapters:1.5.0'
     implementation 'com.jakewharton.timber:timber:4.5.1'
     implementation 'com.tuyenmonkey:mkloader:1.4.0'
-    implementation 'com.android.support:support-annotations:24.2.0'
-    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    implementation 'com.android.support:support-annotations:26.1.0'
 
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    kapt 'com.github.bumptech.glide:compiler:4.2.0'
+    implementation ("com.github.bumptech.glide:recyclerview-integration:4.2.0") {
+        // Excludes the support library because it's already included by Glide.
+        transitive = false
+    }
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'

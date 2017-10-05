@@ -5,7 +5,7 @@ import com.glureau.protorest_core.RestApi
 import com.glureau.protorest_core.StringArray
 
 // Inspired from 'Dog API' https://dog.ceo/dog-api/#all
-class MainApplication : ProtoRestApplication<DogApi>(title = "Dog API", api = DogApi()) {
+class MainApplication : ProtoRestApplication<DogApi>(api = DogApi()) {
     init {
         setup(
                 group("Breeds",

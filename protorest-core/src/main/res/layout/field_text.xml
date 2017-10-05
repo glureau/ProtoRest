@@ -6,22 +6,25 @@
     android:layout_height="wrap_content"
     android:background="@color/fieldBackground"
     android:orientation="vertical"
-    android:paddingBottom="0dp"
+    android:paddingStart="10dp"
     android:paddingEnd="10dp"
-    android:paddingStart="10dp">
+    android:paddingBottom="10dp">
 
     <TextView
-        android:id="@+id/simpleImageLabel"
+        android:id="@+id/fieldTextLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        tools:text="variable_name"
         android:textColor="@color/textLabelColor"
-        android:textSize="12sp"
-        tools:text="variable_name" />
+        android:textSize="12sp" />
 
-    <ImageView
-        android:id="@+id/simpleImageValue"
+    <TextView
+        android:id="@+id/fieldTextValue"
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        tools:src="@drawable/logo" />
+        android:layout_height="wrap_content"
+        android:paddingStart="2dp"
+        android:paddingEnd="0dp"
+        tools:text="Value"
+        android:textColor="@color/textColor"
+        android:textSize="16sp" />
 </LinearLayout>

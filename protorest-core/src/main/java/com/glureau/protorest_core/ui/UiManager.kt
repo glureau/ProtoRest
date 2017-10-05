@@ -11,24 +11,23 @@ import com.glureau.protorest_core.ui.generator.UiGenerator
 import com.glureau.protorest_core.ui.matcher.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.simple_object.view.*
+import kotlinx.android.synthetic.main.field_object.view.*
 import timber.log.Timber
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmErasure
 
-object UiGenerator {
+object UiManager {
 
     val mapping = listOf(
-            NumberMatcher to SimpleTextGenerator,
-            BooleanMatcher to SimpleTextGenerator,
-            DateMatcher to SimpleTextGenerator,
+            NumberMatcher to FieldTextGenerator,
+            BooleanMatcher to FieldTextGenerator,
+            DateMatcher to FieldTextGenerator,
             ImageListMatcher to SimpleImageListGenerator,
-            ImageMatcher to SimpleImageGenerator,
-            StringMatcher to SimpleTextGenerator,
+            ImageMatcher to FieldImageGenerator,
+            StringMatcher to FieldTextGenerator,
             StringListMatcher to SimpleTextListGenerator,
-            NumberListMatcher to SimpleTextListGenerator,
-            AnythingMatcher to SimpleTextGenerator
+            NumberListMatcher to SimpleTextListGenerator
     )
 
     private fun getSpecificGenerator(kClass: KClass<*>, kCallable: KCallable<*>): UiGenerator<Any>? {
@@ -84,9 +83,7 @@ object UiGenerator {
 }
 
 @PublishedApi internal fun layout(activity: Activity, name: String, root: ViewGroup): Pair<View, ViewGroup> {
-    val newView = activity.layoutInflater.inflate(R.layout.simple_object, root, false)
-    newView.simpleObjectLabel.text = name
-    return newView to newView.simpleObjectContainer
+    val newView = activity.layoutInflater.inflate(R.layout.field_object, root, false)
+    newView.fieldObjectLabel.text = name
+    return newView to newView.fieldObjectContainer
 }
-
-

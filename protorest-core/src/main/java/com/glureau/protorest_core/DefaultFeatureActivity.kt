@@ -25,9 +25,6 @@ open class DefaultFeatureActivity : AppCompatActivity(), NavigationView.OnNaviga
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Open view by default
-        drawer_layout.openDrawer(Gravity.START)
-
         nav_view.setNavigationItemSelectedListener(this)
     }
 

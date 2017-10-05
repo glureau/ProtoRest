@@ -4,7 +4,7 @@ import com.glureau.protorest_core.ProtoRestApplication
 import com.glureau.protorest_core.RestApi
 import java.util.*
 
-class MainApplication : ProtoRestApplication<GithubUserApi>(title = "Github-API", api = GithubUserApi()) {
+class MainApplication : ProtoRestApplication<GithubUserApi>(api = GithubUserApi()) {
     init {
         setup(
                 group("User",

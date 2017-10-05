@@ -5,7 +5,7 @@
         android:name="com.glureau.protorest_sample_github.MainApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
-        android:label="Github Sample by ProtoRest"
+        android:label="Github API"
         android:theme="@style/AppTheme">
         <activity android:name="com.glureau.protorest_core.ProtoRestActivity">
             <intent-filter>

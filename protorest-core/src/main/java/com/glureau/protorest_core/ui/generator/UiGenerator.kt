@@ -4,6 +4,6 @@ import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 
-interface UiGenerator<T> {
+interface UiGenerator<in T> {
     fun generate(activity: Activity, name: String, data: T, root: ViewGroup): View
 }
