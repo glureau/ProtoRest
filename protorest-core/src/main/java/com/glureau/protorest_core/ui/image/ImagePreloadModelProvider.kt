@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.support.annotation.NonNull
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -25,8 +23,9 @@ import java.io.InputStream
 
 data class SimpleImage(val url: String)
 
-class SimpleImagePreloadModelProvider(val context: Context, val urls: StringArray) : ListPreloader.PreloadModelProvider<SimpleImage> {
-    override fun getPreloadRequestBuilder(item: SimpleImage): RequestBuilder<*> = GlideApp.with(context).asBitmap().load(item.url)
+class SimpleImagePreloadModelProvider(context: Context, val urls: StringArray) : ListPreloader.PreloadModelProvider<SimpleImage> {
+    private val glideRequests = GlideApp.with(context)
+    override fun getPreloadRequestBuilder(item: SimpleImage): RequestBuilder<*> = glideRequests.asDrawable().load(item.url)
 
     override fun getPreloadItems(position: Int): List<SimpleImage> {
         val url = urls.get(position)
@@ -42,8 +41,8 @@ class SimpleImageAdapter(val activity: Activity) : RecyclerView.Adapter<SimpleIm
     private val preloadSizeProvider = ViewPreloadSizeProvider<SimpleImage>()
     private var images: List<SimpleImage> = mutableListOf()
     private val glideRequests = GlideApp.with(activity)
-    private val fullRequest = glideRequests.asDrawable().placeholder(ColorDrawable(Color.GRAY))
-    private val thumbRequest = glideRequests.asDrawable().diskCacheStrategy(DiskCacheStrategy.DATA).transition(withCrossFade())
+    private val fullRequest = glideRequests.asDrawable().centerCrop().placeholder(ColorDrawable(Color.GRAY))
+    private val thumbRequest = glideRequests.asDrawable().centerCrop().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.DATA).transition(withCrossFade())
 
     fun setImageUrls(imgs: StringArray) {
         images = imgs.map { SimpleImage(it) }
@@ -67,16 +66,6 @@ class SimpleImageAdapter(val activity: Activity) : RecyclerView.Adapter<SimpleIm
     }
 
     override fun getItemId(position: Int) = RecyclerView.NO_ID
-
-    @NonNull
-    fun getPreloadItems(position: Int): List<SimpleImage> {
-        return images.subList(position, position + 1)
-    }
-
-    @NonNull
-    fun getPreloadRequestBuilder(item: SimpleImage): RequestBuilder<Drawable> {
-        return fullRequest.thumbnail(thumbRequest.load(item)).load(item)
-    }
 }
 
 class SimpleImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
