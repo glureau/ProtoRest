@@ -1,6 +1,10 @@
 package com.glureau.protorest_core
 
 import android.app.Application
+import com.glureau.protorest_core.rest.RestApi
+import com.glureau.protorest_core.rest.RestFeature
+import com.glureau.protorest_core.rest.RestFeatureGroup
+import com.glureau.protorest_core.rest.RestResult
 import com.glureau.protorest_core.ui.UiManager
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.moshi.JsonAdapter

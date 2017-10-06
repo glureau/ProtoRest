@@ -1,7 +1,7 @@
 package com.glureau.protorest_sample_dogs
 
 import com.glureau.protorest_core.ProtoRestApplication
-import com.glureau.protorest_core.RestApi
+import com.glureau.protorest_core.rest.RestApi
 import com.glureau.protorest_core.StringArray
 
 // Inspired from 'Dog API' https://dog.ceo/dog-api/#all

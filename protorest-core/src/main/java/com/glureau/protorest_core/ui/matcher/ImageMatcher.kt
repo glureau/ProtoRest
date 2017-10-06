@@ -1,6 +1,6 @@
 package com.glureau.protorest_core.ui.matcher
 
-import com.glureau.protorest_core.RestApi
+import com.glureau.protorest_core.rest.RestApi
 import com.glureau.protorest_core.reflection.Reflection
 import kotlin.reflect.KClass
 

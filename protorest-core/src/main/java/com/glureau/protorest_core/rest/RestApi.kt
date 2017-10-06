@@ -1,4 +1,4 @@
-package com.glureau.protorest_core
+package com.glureau.protorest_core.rest
 
 import com.glureau.protorest_core.network.RestNetworkClient
 import com.squareup.moshi.KotlinJsonAdapterFactory

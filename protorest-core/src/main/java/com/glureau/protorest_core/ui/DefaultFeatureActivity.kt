@@ -1,13 +1,13 @@
-package com.glureau.protorest_core
+package com.glureau.protorest_core.ui
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.Window
+import com.glureau.protorest_core.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 

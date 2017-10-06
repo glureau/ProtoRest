@@ -4,7 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import com.glureau.protorest_core.R
-import com.glureau.protorest_core.RestFeature
+import com.glureau.protorest_core.rest.RestFeature
 import com.glureau.protorest_core.reflection.Reflection
 import com.glureau.protorest_core.ui.generator.*
 import com.glureau.protorest_core.ui.generator.UiGenerator

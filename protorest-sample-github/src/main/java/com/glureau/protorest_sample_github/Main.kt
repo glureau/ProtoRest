@@ -1,7 +1,7 @@
 package com.glureau.protorest_sample_github
 
 import com.glureau.protorest_core.ProtoRestApplication
-import com.glureau.protorest_core.RestApi
+import com.glureau.protorest_core.rest.RestApi
 import java.util.*
 
 class MainApplication : ProtoRestApplication<GithubUserApi>(api = GithubUserApi()) {

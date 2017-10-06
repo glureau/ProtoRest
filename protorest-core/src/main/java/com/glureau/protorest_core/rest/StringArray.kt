@@ -1,4 +1,4 @@
-package com.glureau.protorest_core
+package com.glureau.protorest_core.rest
 
 import com.squareup.moshi.*
 
