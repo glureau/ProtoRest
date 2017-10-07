@@ -12,7 +12,6 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import timber.log.Timber
 
 class ProtoRestActivity : DefaultFeatureActivity() {
     private lateinit var root: ProtoRestApplication<*>
@@ -30,13 +29,15 @@ class ProtoRestActivity : DefaultFeatureActivity() {
         root.api.javaClass.declaredMethods.forEach { endpoint ->
             val features = ArrayList<RestFeature<*>>()
             endpoint.annotations.filter { it is RestApi.Endpoint }.forEach {
-                val parameters = mutableListOf<RestParameter<String>>()
+                val parameters = mutableListOf<RestParameter>()
                 endpoint.parameterAnnotations.forEach { annotations ->
                     val annParam = annotations.filter { it is RestApi.EndpointParam }.firstOrNull() as RestApi.EndpointParam?
                     if (annParam != null) {
-                        parameters.add(RestParameter(annParam.name, annParam.defaultValue))
+                        val name = RestApi.EndpointParam::class.java.getMethod("name").invoke(annParam) as String
+                        val defaultValue = RestApi.EndpointParam::class.java.getMethod("defaultValue").invoke(annParam) as String
+                        parameters.add(RestParameter(name, defaultValue))
                     } else {
-                        parameters.add(RestParameter("Undefined", ""))
+                        parameters.add(RestParameter())
                     }
                 }
                 features.add(root.feature(endpoint.name, {
@@ -63,17 +64,15 @@ class ProtoRestActivity : DefaultFeatureActivity() {
     }
 
     private fun generateViews(featureGroup: RestFeatureGroup, feature: RestFeature<*>) {
-        feature.generateViews(this, mainContent)
+        feature.generateViews(this, parameterContainer, resultContainer)
                 .doOnSubscribe {
                     bar_title.text = "${resources.getString(R.string.app_name)} / ${featureGroup.name} / ${feature.name}"
                     loading.visibility = View.VISIBLE
                 }
-                .subscribe({ views ->
-                    mainContent.removeAllViews()
-                    views.forEach { mainContent.addView(it) }
+                .subscribe {
                     loading.visibility = View.INVISIBLE
-                    mainContent.invalidate()
-                })
+                    resultContainer.invalidate()
+                }
     }
 
     // Easier to use a direct click listener

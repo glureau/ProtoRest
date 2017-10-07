@@ -3,13 +3,14 @@ package com.glureau.protorest_core.ui
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import com.glureau.protorest_core.R
 import com.glureau.protorest_core.reflection.Reflection
 import com.glureau.protorest_core.rest.RestFeature
 import com.glureau.protorest_core.rest.RestParameter
 import com.glureau.protorest_core.ui.generator.*
 import com.glureau.protorest_core.ui.matcher.*
-import io.reactivex.Observable
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.field_object.view.*
 import timber.log.Timber
@@ -35,22 +36,27 @@ object UiManager {
         return mapping.firstOrNull { it.first.match(kCallable.returnType.jvmErasure, Reflection.fieldAnnotations(kClass, kCallable)) }?.second as UiGenerator<Any>?
     }
 
-    fun <T : Any> generateViews(activity: Activity, feature: RestFeature<T>, root: ViewGroup): Observable<List<View>> {
+    fun <T : Any> generateViews(activity: Activity, feature: RestFeature<T>, parameterContainer: ViewGroup, resultContainer: ViewGroup): Completable {
         return feature.observable()
                 .doOnSubscribe {
                     feature.params.forEach {
-                        generateParameterView(it)
+                        generateParameterView(activity, parameterContainer, it)
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .map { next ->
                     val dataClass = next.data.javaClass.kotlin
-                    generateViewsRecursively(activity, next.data, dataClass, root)
+                    resultContainer.removeAllViews()
+                    generateViewsRecursively(activity, next.data, dataClass, resultContainer).forEach { resultContainer.addView(it) }
                 }
+                .ignoreElements()
     }
 
-    private fun generateParameterView(restParameter: RestParameter<*>) {
-        restParameter.javaClass.genericInterfaces
+    private fun generateParameterView(activity: Activity, parameterContainer: ViewGroup, restParameter: RestParameter) {
+        parameterContainer.removeAllViews()
+        val editText = EditText(activity)
+        editText.setText(restParameter.defaultValue)
+        parameterContainer.addView(editText)
     }
 
     @PublishedApi internal fun <T> generateViewsRecursively(activity: Activity, data: T, dataType: KClass<*>, root: ViewGroup): MutableList<View> {
