@@ -1,3 +1,3 @@
 package com.glureau.protorest_core.rest
 
-data class RestParameter<T>(val name: String, val defaultValue: T? = null)
+data class RestParameter(val name: String = "Undefined", val defaultValue: String = "")

@@ -21,12 +21,12 @@ open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
     fun group(name: String, vararg features: RestFeature<*>) = RestFeatureGroup(name, features.toList())
 
     fun <T : Any> feature(name: String,
-                          action: (params: Array<out RestParameter<*>>) -> Observable<RestResult<T>>,
-                          vararg params: RestParameter<*>): RestFeature<T> {
+                          action: (params: Array<out RestParameter>) -> Observable<RestResult<T>>,
+                          vararg params: RestParameter): RestFeature<T> {
 
         return RestFeature(name,
                 action,
-                { a, f: RestFeature<T>, r -> UiManager.generateViews(a, f, r) },
+                { a, f: RestFeature<T>, paramContainer, resultContainer -> UiManager.generateViews(a, f, paramContainer, resultContainer) },
                 params)
     }
 
