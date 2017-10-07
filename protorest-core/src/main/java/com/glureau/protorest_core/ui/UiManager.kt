@@ -32,7 +32,7 @@ object UiManager {
 
     private fun getSpecificGenerator(kClass: KClass<*>, kCallable: KCallable<*>): UiGenerator<Any>? {
         // TODO: fix this 'Unchecked cast' with a more elegant generics management.
-        return mapping.firstOrNull { it.first.match(kCallable.returnType.jvmErasure, Reflection.annotations(kClass, kCallable)) }?.second as UiGenerator<Any>?
+        return mapping.firstOrNull { it.first.match(kCallable.returnType.jvmErasure, Reflection.fieldAnnotations(kClass, kCallable)) }?.second as UiGenerator<Any>?
     }
 
     fun <T : Any> generateViews(activity: Activity, feature: RestFeature<T>, root: ViewGroup): Observable<List<View>> {

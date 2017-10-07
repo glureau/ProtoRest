@@ -35,7 +35,7 @@ data class GithubRepository(val id: Long?, val name: String?, val full_name: Str
 
 class GithubUserApi : RestApi("https://api.github.com/") {
     fun user(login: String) = get("users/$login", GithubUser::class.java)
-    fun userSimple(login: String) = get("users/$login", SimpleGithubUser::class.java)
+    @Endpoint(SimpleGithubUser::class) fun userSimple(login: String) = get("users/$login", SimpleGithubUser::class.java)
     fun organization(orga: String) = get("orgs/$orga", GithubOrganization::class.java)
     fun organizationSimple(orga: String) = get("orgs/$orga", SimpleGithubOrganization::class.java)
     fun repository(login: String, repos: String) = get("repos/$login/$repos", GithubRepository::class.java)
