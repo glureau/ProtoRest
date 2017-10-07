@@ -4,10 +4,10 @@ import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import com.glureau.protorest_core.R
-import com.glureau.protorest_core.rest.RestFeature
 import com.glureau.protorest_core.reflection.Reflection
+import com.glureau.protorest_core.rest.RestFeature
+import com.glureau.protorest_core.rest.RestParameter
 import com.glureau.protorest_core.ui.generator.*
-import com.glureau.protorest_core.ui.generator.UiGenerator
 import com.glureau.protorest_core.ui.matcher.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -37,11 +37,20 @@ object UiManager {
 
     fun <T : Any> generateViews(activity: Activity, feature: RestFeature<T>, root: ViewGroup): Observable<List<View>> {
         return feature.observable()
+                .doOnSubscribe {
+                    feature.params.forEach {
+                        generateParameterView(it)
+                    }
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .map { next ->
                     val dataClass = next.data.javaClass.kotlin
                     generateViewsRecursively(activity, next.data, dataClass, root)
                 }
+    }
+
+    private fun generateParameterView(restParameter: RestParameter<*>) {
+        restParameter.javaClass.genericInterfaces
     }
 
     @PublishedApi internal fun <T> generateViewsRecursively(activity: Activity, data: T, dataType: KClass<*>, root: ViewGroup): MutableList<View> {

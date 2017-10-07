@@ -7,11 +7,12 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
 class RestFeature<T>(val name: String,
-                     val action: () -> Observable<RestResult<T>>,
-                     val generateViews: (Activity, RestFeature<T>, ViewGroup) -> Observable<List<View>>) {
+                     val action: (params: Array<out RestParameter<*>>) -> Observable<RestResult<T>>,
+                     val generateViews: (Activity, RestFeature<T>, ViewGroup) -> Observable<List<View>>,
+                     val params: Array<out RestParameter<*>>) {
     fun generateViews(activity: Activity, root: ViewGroup) = generateViews.invoke(activity, this, root)
 
-    fun observable(): Observable<RestResult<T>> = action.invoke().subscribeOn(Schedulers.io())
+    fun observable(): Observable<RestResult<T>> = action.invoke(params).subscribeOn(Schedulers.io())
 }
 
 class RestFeatureGroup(val name: String, val features: List<RestFeature<*>>)

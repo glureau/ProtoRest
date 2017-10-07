@@ -1,10 +1,7 @@
 package com.glureau.protorest_core
 
 import android.app.Application
-import com.glureau.protorest_core.rest.RestApi
-import com.glureau.protorest_core.rest.RestFeature
-import com.glureau.protorest_core.rest.RestFeatureGroup
-import com.glureau.protorest_core.rest.RestResult
+import com.glureau.protorest_core.rest.*
 import com.glureau.protorest_core.ui.UiManager
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Observable
@@ -17,12 +14,21 @@ open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
         setup = groups.toMutableList()
     }
 
-    internal fun addGroup(group : RestFeatureGroup) {
+    internal fun addGroup(group: RestFeatureGroup) {
         setup.add(group)
     }
 
     fun group(name: String, vararg features: RestFeature<*>) = RestFeatureGroup(name, features.toList())
-    fun <T : Any> feature(name: String, action: () -> Observable<RestResult<T>>) = RestFeature(name, action, { a, f: RestFeature<T>, r -> UiManager.generateViews(a, f, r) })
+
+    fun <T : Any> feature(name: String,
+                          action: (params: Array<out RestParameter<*>>) -> Observable<RestResult<T>>,
+                          vararg params: RestParameter<*>): RestFeature<T> {
+
+        return RestFeature(name,
+                action,
+                { a, f: RestFeature<T>, r -> UiManager.generateViews(a, f, r) },
+                params)
+    }
 
     override fun onCreate() {
         super.onCreate()

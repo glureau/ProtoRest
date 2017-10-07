@@ -6,10 +6,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.glureau.protorest_core.rest.RestApi
-import com.glureau.protorest_core.rest.RestFeature
-import com.glureau.protorest_core.rest.RestFeatureGroup
-import com.glureau.protorest_core.rest.RestResult
+import com.glureau.protorest_core.rest.*
 import com.glureau.protorest_core.ui.DefaultFeatureActivity
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,9 +29,20 @@ class ProtoRestActivity : DefaultFeatureActivity() {
         // Manage @RestApi.Endpoint annotations to auto-generate menu + required parameters
         root.api.javaClass.declaredMethods.forEach { endpoint ->
             val features = ArrayList<RestFeature<*>>()
-            endpoint.annotations.filter { it is RestApi.Endpoint }.forEach { annotation ->
-                features.add(root.feature(endpoint.name, { endpoint.invoke(root.api, "glureau") as Observable<RestResult<Any>> }))
-//                Timber.i("declaredMethods ${endpoint.name}(${endpoint.parameterTypes.joinToString()}) : ${endpoint.returnType}<${(annotation as RestApi.Endpoint).value}>")
+            endpoint.annotations.filter { it is RestApi.Endpoint }.forEach {
+                val parameters = mutableListOf<RestParameter<String>>()
+                endpoint.parameterAnnotations.forEach { annotations ->
+                    val annParam = annotations.filter { it is RestApi.EndpointParam }.firstOrNull() as RestApi.EndpointParam?
+                    if (annParam != null) {
+                        parameters.add(RestParameter(annParam.name, annParam.defaultValue))
+                    } else {
+                        parameters.add(RestParameter("Undefined", ""))
+                    }
+                }
+                features.add(root.feature(endpoint.name, {
+                    val params = parameters.map { it.defaultValue }.toTypedArray()
+                    endpoint.invoke(root.api, *params) as Observable<RestResult<Any>>
+                }, *parameters.toTypedArray()))
             }
             root.addGroup(root.group("Auto", *features.toTypedArray()))
         }
