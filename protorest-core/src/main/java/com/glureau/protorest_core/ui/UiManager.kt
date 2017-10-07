@@ -8,17 +8,22 @@ import com.glureau.protorest_core.R
 import com.glureau.protorest_core.reflection.Reflection
 import com.glureau.protorest_core.rest.RestFeature
 import com.glureau.protorest_core.rest.RestParameter
+import com.glureau.protorest_core.rest.RestResult
 import com.glureau.protorest_core.ui.generator.*
 import com.glureau.protorest_core.ui.matcher.*
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.field_object.view.*
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmErasure
 
-object UiManager {
+class UiManager(val activity: Activity, val updateUiSubject: PublishSubject<Boolean>, val parameterContainer: ViewGroup, val resultContainer: ViewGroup) {
+
+    private var mLastFeatureForParameters: RestFeature<out Any>? = null
 
     val mapping = listOf(
             NumberMatcher to FieldTextGenerator,
@@ -36,27 +41,40 @@ object UiManager {
         return mapping.firstOrNull { it.first.match(kCallable.returnType.jvmErasure, Reflection.fieldAnnotations(kClass, kCallable)) }?.second as UiGenerator<Any>?
     }
 
-    fun <T : Any> generateViews(activity: Activity, feature: RestFeature<T>, parameterContainer: ViewGroup, resultContainer: ViewGroup): Completable {
-        return feature.observable()
-                .doOnSubscribe {
-                    feature.params.forEach {
-                        generateParameterView(activity, parameterContainer, it)
-                    }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .map { next ->
-                    val dataClass = next.data.javaClass.kotlin
-                    resultContainer.removeAllViews()
-                    generateViewsRecursively(activity, next.data, dataClass, resultContainer).forEach { resultContainer.addView(it) }
-                }
-                .ignoreElements()
+    fun <T : Any> updateParameters(feature: RestFeature<T>) {
+        if (mLastFeatureForParameters != feature) {
+            parametersSubscription.forEach { it.dispose() }
+            parameterContainer.removeAllViews()
+            feature.params.forEach {
+                generateParameterView(parameterContainer, it)
+            }
+            mLastFeatureForParameters = feature
+        }
     }
 
-    private fun generateParameterView(activity: Activity, parameterContainer: ViewGroup, restParameter: RestParameter) {
-        parameterContainer.removeAllViews()
+    fun <T : Any> updateResult(result: RestResult<T>) {
+        val dataClass = result.data.javaClass.kotlin
+        resultContainer.removeAllViews()
+        generateViewsRecursively(activity, result.data, dataClass, resultContainer).forEach { resultContainer.addView(it) }
+    }
+
+    private val parametersSubscription = mutableListOf<Disposable>()
+
+    private fun generateParameterView(parameterContainer: ViewGroup, restParameter: RestParameter) {
         val editText = EditText(activity)
-        editText.setText(restParameter.defaultValue)
+        editText.setText(restParameter.value)
+        editText.post { editText.setSelection(restParameter.value.length) } // Update cursor at the end
+        val sub = RxTextView.textChanges(editText)
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .subscribe {
+                    if (restParameter.value != it.toString()) {
+                        restParameter.value = it.toString()
+                        updateUiSubject.onNext(true)
+                    }
+                }
+        parametersSubscription.add(sub)
         parameterContainer.addView(editText)
+        // TODO : This is not really mirrored implementation (creating/removing/adding/filling views), should be reworked.
     }
 
     @PublishedApi internal fun <T> generateViewsRecursively(activity: Activity, data: T, dataType: KClass<*>, root: ViewGroup): MutableList<View> {
@@ -95,6 +113,7 @@ object UiManager {
         Timber.i("Generated views %d", views.count())
         return views
     }
+
 }
 
 @PublishedApi internal fun layout(activity: Activity, name: String, root: ViewGroup): Pair<View, ViewGroup> {
