@@ -2,9 +2,7 @@ package com.glureau.protorest_core
 
 import android.app.Application
 import com.glureau.protorest_core.rest.*
-import com.glureau.protorest_core.ui.UiManager
 import com.squareup.leakcanary.LeakCanary
-import io.reactivex.Observable
 import timber.log.Timber
 
 
@@ -18,15 +16,15 @@ open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
         setup.add(group)
     }
 
-    fun group(name: String, vararg features: RestFeature<*>) = RestFeatureGroup(name, features.toList())
+    fun group(name: String, vararg features: RestFeature<out Any>) = RestFeatureGroup(name, features.toList())
 
     fun <T : Any> feature(name: String,
-                          action: (params: Array<out RestParameter>) -> Observable<RestResult<T>>,
+                          action: (params: Array<out RestParameter>) -> RestResult<T>,
                           vararg params: RestParameter): RestFeature<T> {
 
         return RestFeature(name,
                 action,
-                { a, f: RestFeature<T>, paramContainer, resultContainer -> UiManager.generateViews(a, f, paramContainer, resultContainer) },
+                //                { a, f, paramContainer, resultContainer -> UiManager.generateViews(a, f, paramContainer, resultContainer) },
                 params)
     }
 

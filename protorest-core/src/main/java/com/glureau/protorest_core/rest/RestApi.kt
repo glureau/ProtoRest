@@ -5,7 +5,6 @@ import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Rfc3339DateJsonAdapter
 import com.squareup.moshi.Types
-import io.reactivex.Observable
 import timber.log.Timber
 import java.util.*
 import kotlin.reflect.KClass
@@ -23,7 +22,7 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
 
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.VALUE_PARAMETER)
-    annotation class EndpointParam(@JvmField val name: String, @JvmField val defaultValue: String="")
+    annotation class EndpointParam(@JvmField val name: String, @JvmField val defaultValue: String = "")
 
     val moshi: Moshi
 
@@ -36,25 +35,24 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
         moshi = builder.build()
     }
 
-    fun <T> get(path: String, clazz: Class<T>): Observable<RestResult<T>> =
-            RestNetworkClient.get(baseApi + path)
-                    .map { response ->
-                        val body = response.body()?.string()
-                        if (body != null) {
-                            Timber.i("Receive response from server: %s", body)
-                        } else {
-                            Timber.e("Error when requesting %s", response.request().url())
-                            Timber.e("Body is null, status: %i %s", response.code(), response.message())
-                        }
-                        val jsonAdapter = moshi.adapter(clazz).lenient()
-                        val result = jsonAdapter.fromJson(body)
-                        Timber.i("Response parsed: %s", result)
-                        if (result == null) {
-                            error("Unable to parse")
-                        } else {
-                            RestResult(result)
-                        }
-                    }
+    fun <T> get(path: String, clazz: Class<T>): RestResult<T> {
+        val response = RestNetworkClient.get(baseApi + path)
+        val body = response.body()?.string()
+        if (body != null) {
+            Timber.i("Receive response from server: %s", body)
+        } else {
+            Timber.e("Error when requesting %s", response.request().url())
+            Timber.e("Body is null, status: %i %s", response.code(), response.message())
+        }
 
+        val jsonAdapter = moshi.adapter(clazz).lenient()
+        val result = jsonAdapter.fromJson(body)
+        Timber.i("Response parsed: %s", result)
+        if (result == null) {
+            error("Unable to parse")
+        } else {
+            return RestResult(result)
+        }
+    }
 
 }
