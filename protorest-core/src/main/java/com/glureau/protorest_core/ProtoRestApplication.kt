@@ -7,15 +7,18 @@ import com.glureau.protorest_core.rest.RestFeatureGroup
 import com.glureau.protorest_core.rest.RestResult
 import com.glureau.protorest_core.ui.UiManager
 import com.squareup.leakcanary.LeakCanary
-import com.squareup.moshi.JsonAdapter
 import io.reactivex.Observable
 import timber.log.Timber
 
 
 open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
-    lateinit var setup: List<RestFeatureGroup>
+    lateinit var setup: MutableList<RestFeatureGroup>
     fun setup(vararg groups: RestFeatureGroup) {
-        setup = groups.toList()
+        setup = groups.toMutableList()
+    }
+
+    internal fun addGroup(group : RestFeatureGroup) {
+        setup.add(group)
     }
 
     fun group(name: String, vararg features: RestFeature<*>) = RestFeatureGroup(name, features.toList())
@@ -32,10 +35,6 @@ open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-    }
-
-    private fun <T> addDataAdapter(adapter: JsonAdapter<T>) {
-
     }
 
 }

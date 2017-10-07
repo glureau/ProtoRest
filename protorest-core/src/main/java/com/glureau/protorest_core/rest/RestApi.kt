@@ -8,12 +8,17 @@ import com.squareup.moshi.Types
 import io.reactivex.Observable
 import timber.log.Timber
 import java.util.*
+import kotlin.reflect.KClass
 
 open class RestApi(val baseApi: String, vararg adapters: Any) {
 
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.FIELD)
     annotation class Image
+
+    @Retention(AnnotationRetention.RUNTIME)
+    @Target(AnnotationTarget.FUNCTION)
+    annotation class Endpoint(@JvmField val value: KClass<*>) // TODO : pass the KClass as generic of the annotation, for more flexibility if required
 
     val moshi: Moshi
 
