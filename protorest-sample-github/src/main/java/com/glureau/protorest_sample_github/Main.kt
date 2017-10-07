@@ -7,18 +7,21 @@ import java.util.*
 class MainApplication : ProtoRestApplication<GithubUserApi>(api = GithubUserApi()) {
     init {
         setup(
-                group("User",
-                        feature("glureau (full)", { api.user("glureau") }),
-                        feature("glureau (simple)", { api.userSimple("glureau") }),
-                        feature("jakewharton (simple)", { api.userSimple("jakewharton") }),
-                        feature("swankjesse (simple)", { api.userSimple("swankjesse") })),
-                group("Organization",
-                        feature("square (full)", { api.organization("square") }),
-                        feature("square (simple)", { api.organizationSimple("square") }),
-                        feature("betomorrow (simple)", { api.organizationSimple("betomorrow") })),
-                group("Repos",
-                        feature("ProtoRest (full)", { api.repository("glureau", "protorest") }),
-                        feature("ProtoRest (simple)", { api.repositorySimple("glureau", "protorest") }))
+                /*
+                        group("User",
+                                feature("glureau (full)", { api.user("glureau") }),
+                                feature("glureau (simple)", { api.userSimple("glureau") }),
+                                feature("jakewharton (simple)", { api.userSimple("jakewharton") }),
+                                feature("swankjesse (simple)", { api.userSimple("swankjesse") })),
+                        group("Organization",
+                                feature("square (full)", { api.organization("square") }),
+                                feature("square (simple)", { api.organizationSimple("square") }),
+                                feature("betomorrow (simple)", { api.organizationSimple("betomorrow") })),
+                        group("Repos",
+                                feature("ProtoRest (full)", { api.repository("glureau", "protorest") }),
+                                feature("ProtoRest (simple)", { api.repositorySimple("glureau", "protorest") }))
+                                        */
+
         )
     }
 }
@@ -35,7 +38,7 @@ data class GithubRepository(val id: Long?, val name: String?, val full_name: Str
 
 class GithubUserApi : RestApi("https://api.github.com/") {
     fun user(login: String) = get("users/$login", GithubUser::class.java)
-    @Endpoint(SimpleGithubUser::class) fun userSimple(login: String) = get("users/$login", SimpleGithubUser::class.java)
+    @Endpoint(SimpleGithubUser::class) fun userSimple(@EndpointParam("login", "glureau") login: String) = get("users/$login", SimpleGithubUser::class.java)
     fun organization(orga: String) = get("orgs/$orga", GithubOrganization::class.java)
     fun organizationSimple(orga: String) = get("orgs/$orga", SimpleGithubOrganization::class.java)
     fun repository(login: String, repos: String) = get("repos/$login/$repos", GithubRepository::class.java)

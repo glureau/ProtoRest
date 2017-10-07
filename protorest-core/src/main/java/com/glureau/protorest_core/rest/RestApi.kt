@@ -18,7 +18,12 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
 
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.FUNCTION)
-    annotation class Endpoint(@JvmField val value: KClass<*>) // TODO : pass the KClass as generic of the annotation, for more flexibility if required
+    @SuppressWarnings("unused")
+    annotation class Endpoint(@JvmField val returnType: KClass<*>) // TODO : pass the KClass as generic of the annotation, for more flexibility if required
+
+    @Retention(AnnotationRetention.RUNTIME)
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    annotation class EndpointParam(@JvmField val name: String, @JvmField val defaultValue: String="")
 
     val moshi: Moshi
 
