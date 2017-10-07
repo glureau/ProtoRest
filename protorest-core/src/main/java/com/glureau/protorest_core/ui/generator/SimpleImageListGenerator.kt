@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.glureau.protorest_core.R
-import com.glureau.protorest_core.StringArray
+import com.glureau.protorest_core.rest.StringArray
 import com.glureau.protorest_core.ui.image.SimpleImageAdapter
 import com.glureau.protorest_core.ui.image.SimpleImagePreloadModelProvider
 import kotlinx.android.synthetic.main.field_recyclerview.view.*

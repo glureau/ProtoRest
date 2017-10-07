@@ -1,8 +1,8 @@
 package com.glureau.protorest_core.ui.matcher
 
-import com.glureau.protorest_core.rest.RestApi
-import com.glureau.protorest_core.StringArray
 import com.glureau.protorest_core.reflection.Reflection
+import com.glureau.protorest_core.rest.RestApi
+import com.glureau.protorest_core.rest.StringArray
 import kotlin.reflect.KClass
 
 object ImageListMatcher : TypeMatcher {

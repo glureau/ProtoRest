@@ -17,7 +17,7 @@ import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.glureau.protorest_core.R
-import com.glureau.protorest_core.StringArray
+import com.glureau.protorest_core.rest.StringArray
 import java.io.InputStream
 
 

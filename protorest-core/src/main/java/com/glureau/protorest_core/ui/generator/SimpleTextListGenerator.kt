@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.glureau.protorest_core.R
-import com.glureau.protorest_core.StringArray
+import com.glureau.protorest_core.rest.StringArray
 import kotlinx.android.synthetic.main.field_object.view.*
 
 object SimpleTextListGenerator : UiGenerator<StringArray> {
