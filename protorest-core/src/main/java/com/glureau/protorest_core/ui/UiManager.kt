@@ -3,11 +3,9 @@ package com.glureau.protorest_core.ui
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import com.glureau.protorest_core.R
 import com.glureau.protorest_core.reflection.Reflection
 import com.glureau.protorest_core.rest.RestFeature
-import com.glureau.protorest_core.rest.RestParameter
 import com.glureau.protorest_core.rest.RestResult
 import com.glureau.protorest_core.ui.generator.*
 import com.glureau.protorest_core.ui.matcher.*
@@ -15,6 +13,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.field_object.view.*
+import kotlinx.android.synthetic.main.parameter_text.view.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KCallable
@@ -43,12 +42,30 @@ class UiManager(val activity: Activity, val updateUiSubject: PublishSubject<Bool
 
     fun <T : Any> updateParameters(feature: RestFeature<T>) {
         if (mLastFeatureForParameters != feature) {
-            parametersSubscription.forEach { it.dispose() }
-            parameterContainer.removeAllViews()
-            feature.params.forEach {
-                generateParameterView(parameterContainer, it)
-            }
+            generateParameterView(feature)
             mLastFeatureForParameters = feature
+        }
+    }
+
+    private fun <T : Any> generateParameterView(feature: RestFeature<T>) {
+        parametersSubscription.forEach { it.dispose() }
+        parameterContainer.removeAllViews()
+        feature.params.forEach { restParameter ->
+            val view = activity.layoutInflater.inflate(R.layout.parameter_text, parameterContainer, false)
+            view.paramTextLabel.text = restParameter.name
+            val editText = view.paramTextValue
+            editText.setText(restParameter.value)
+            editText.post { editText.setSelection(restParameter.value.length) } // Update cursor at the end
+            val sub = RxTextView.textChanges(editText)
+                    .debounce(300, TimeUnit.MILLISECONDS)
+                    .subscribe {
+                        if (restParameter.value != it.toString()) {
+                            restParameter.value = it.toString()
+                            updateUiSubject.onNext(true)
+                        }
+                    }
+            parametersSubscription.add(sub)
+            parameterContainer.addView(view)
         }
     }
 
@@ -59,23 +76,6 @@ class UiManager(val activity: Activity, val updateUiSubject: PublishSubject<Bool
     }
 
     private val parametersSubscription = mutableListOf<Disposable>()
-
-    private fun generateParameterView(parameterContainer: ViewGroup, restParameter: RestParameter) {
-        val editText = EditText(activity)
-        editText.setText(restParameter.value)
-        editText.post { editText.setSelection(restParameter.value.length) } // Update cursor at the end
-        val sub = RxTextView.textChanges(editText)
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .subscribe {
-                    if (restParameter.value != it.toString()) {
-                        restParameter.value = it.toString()
-                        updateUiSubject.onNext(true)
-                    }
-                }
-        parametersSubscription.add(sub)
-        parameterContainer.addView(editText)
-        // TODO : This is not really mirrored implementation (creating/removing/adding/filling views), should be reworked.
-    }
 
     @PublishedApi internal fun <T> generateViewsRecursively(activity: Activity, data: T, dataType: KClass<*>, root: ViewGroup): MutableList<View> {
         val views = mutableListOf<View>()
