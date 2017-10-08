@@ -37,12 +37,13 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
 
     fun <T> get(path: String, clazz: Class<T>): RestResult<T> {
         val response = RestNetworkClient.get(baseApi + path)
+        Timber.d("Headers: ${response.headers()}")
         val body = response.body()?.string()
         if (body != null) {
-            Timber.i("Receive response from server: %s", body)
+            Timber.i("Receive response from server: ${response.code()} $body")
         } else {
-            Timber.e("Error when requesting %s", response.request().url())
-            Timber.e("Body is null, status: %i %s", response.code(), response.message())
+            Timber.e("Error when requesting ${response.request().url()}")
+            Timber.e("Body is null, status: ${response.code()} $body")
         }
 
         val jsonAdapter = moshi.adapter(clazz).lenient()
