@@ -1,4 +1,4 @@
-package com.glureau.protorest_core.ui.generator
+package com.glureau.protorest_core.ui.generator.values
 
 import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
@@ -12,7 +12,7 @@ import com.glureau.protorest_core.ui.image.SimpleImageAdapter
 import com.glureau.protorest_core.ui.image.SimpleImagePreloadModelProvider
 import kotlinx.android.synthetic.main.field_recyclerview.view.*
 
-object SimpleImageListGenerator : UiGenerator<StringArray> {
+internal object SimpleImageListGenerator : ValueViewGenerator<StringArray> {
     override fun generate(activity: Activity, name: String, data: StringArray, root: ViewGroup): View {
         val newView = activity.layoutInflater.inflate(R.layout.field_recyclerview, root, false)
         newView.fieldRecyclerViewLabel.text = name

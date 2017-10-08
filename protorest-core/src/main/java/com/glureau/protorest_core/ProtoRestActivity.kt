@@ -9,6 +9,8 @@ import android.view.View
 import com.glureau.protorest_core.rest.*
 import com.glureau.protorest_core.ui.DefaultFeatureActivity
 import com.glureau.protorest_core.ui.UiManager
+import com.glureau.protorest_core.ui.generator.parameters.ParameterViewManager
+import com.glureau.protorest_core.ui.generator.values.ResultViewManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -20,14 +22,14 @@ import kotlinx.android.synthetic.main.content_main.*
 class ProtoRestActivity : DefaultFeatureActivity() {
     private lateinit var root: ProtoRestApplication<*>
 
-    val updateUiSubject = PublishSubject.create<Boolean>()
+    private val updateUiSubject = PublishSubject.create<Boolean>()!!
     private var uiSubscription: Disposable? = null
 
     private lateinit var uiManager: UiManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        uiManager = UiManager(this, updateUiSubject, parameterContainer, resultContainer)
+        uiManager = UiManager(this, ResultViewManager(this, resultContainer), ParameterViewManager(this, parameterContainer, updateUiSubject))
         root = application as ProtoRestApplication<*>
 
         // Open view by default
@@ -59,15 +61,22 @@ class ProtoRestActivity : DefaultFeatureActivity() {
                 }, *parameters.toTypedArray()))
             }
         }
+        val featureGroups: MutableList<RestFeatureGroup> = root.setup
         if (features.isNotEmpty()) {
-            root.addGroup(root.group("Auto", *features.toTypedArray()))
+            featureGroups.add(root.group(null, *features.toTypedArray()))
         }
 
         // Manual views
-        for (featureGroup in root.setup) {
-            val subMenu = menu.addSubMenu(0, featureGroup.name.hashCode(), Menu.NONE, featureGroup.name)
+        for (featureGroup in featureGroups) {
+            val targetMenu: Menu
+            if (featureGroup.name == null) {
+                targetMenu = menu
+            } else {
+                targetMenu = menu.addSubMenu(0, featureGroup.name.hashCode(), Menu.NONE, featureGroup.name)
+            }
             for (feature in featureGroup.features) {
-                val item = subMenu.add(0, feature.name.hashCode(), Menu.NONE, featureGroup.name + " / " + feature.name)
+                val itemText = (if (featureGroup.name != null) featureGroup.name + " / " else "") + feature.name
+                val item = targetMenu.add(0, feature.name.hashCode(), Menu.NONE, itemText)
                 item.setIcon(R.drawable.new_box) // Todo : pass icon as a parameter
                 item.setOnMenuItemClickListener {
                     selectFeature(featureGroup, feature)
@@ -78,9 +87,18 @@ class ProtoRestActivity : DefaultFeatureActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        nav_view.menu.clear()
+    }
+
 
     private fun <T : Any> selectFeature(featureGroup: RestFeatureGroup, feature: RestFeature<T>) {
-        bar_title.text = "${resources.getString(R.string.app_name)} / ${featureGroup.name} / ${feature.name}"
+        if (featureGroup.name != null) {
+            bar_title.text = "${resources.getString(R.string.app_name)} / ${featureGroup.name} / ${feature.name}"
+        } else {
+            bar_title.text = "${resources.getString(R.string.app_name)} / ${feature.name}"
+        }
         uiSubscription?.dispose()
         uiSubscription = updateUiSubject
                 .observeOn(AndroidSchedulers.mainThread())

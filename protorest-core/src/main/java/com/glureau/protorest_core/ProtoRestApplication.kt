@@ -12,11 +12,10 @@ open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
         setup = groups.toMutableList()
     }
 
-    internal fun addGroup(group: RestFeatureGroup) {
-        setup.add(group)
-    }
-
-    fun group(name: String, vararg features: RestFeature<out Any>) = RestFeatureGroup(name, features.toList())
+    /**
+     * @param name set to null to insert in the main menu directly
+     */
+    fun group(name: String?, vararg features: RestFeature<out Any>) = RestFeatureGroup(name, features.toList())
 
     fun <T : Any> feature(name: String,
                           action: (params: Array<out RestParameter>) -> RestResult<T>,
@@ -24,7 +23,6 @@ open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
 
         return RestFeature(name,
                 action,
-                //                { a, f, paramContainer, resultContainer -> UiManager.generateViews(a, f, paramContainer, resultContainer) },
                 params)
     }
 
