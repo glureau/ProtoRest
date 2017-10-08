@@ -3,12 +3,14 @@ package com.glureau.protorest_core.ui
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import com.glureau.protorest_core.R
 import com.glureau.protorest_core.reflection.Reflection
 import com.glureau.protorest_core.rest.RestFeature
 import com.glureau.protorest_core.rest.RestResult
 import com.glureau.protorest_core.ui.generator.*
 import com.glureau.protorest_core.ui.matcher.*
+import com.jakewharton.rxbinding2.widget.RxAdapterView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
@@ -55,7 +57,7 @@ class UiManager(val activity: Activity, val updateUiSubject: PublishSubject<Bool
             view.paramTextLabel.text = restParameter.name
             val editText = view.paramTextValue
             editText.setText(restParameter.value)
-            editText.post { editText.setSelection(restParameter.value.length) } // Update cursor at the end
+//            editText.postDelayed({ editText.setSelection(restParameter.value.length) } , 50)// Update cursor at the end
             val sub = RxTextView.textChanges(editText)
                     .debounce(300, TimeUnit.MILLISECONDS)
                     .subscribe {
@@ -65,6 +67,15 @@ class UiManager(val activity: Activity, val updateUiSubject: PublishSubject<Bool
                         }
                     }
             parametersSubscription.add(sub)
+
+            val spinner = view.paramTextValueSpinner
+            spinner.visibility = if (restParameter.suggestedValues.isEmpty()) View.GONE else View.VISIBLE
+            if (restParameter.suggestedValues.isNotEmpty()) {
+                spinner.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_item, restParameter.suggestedValues)
+                RxAdapterView.itemSelections(spinner)
+                        .subscribe { editText.setText(spinner.adapter.getItem(it).toString()) }
+            }
+
             parameterContainer.addView(view)
         }
     }

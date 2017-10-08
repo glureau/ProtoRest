@@ -22,7 +22,7 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
 
     @Retention(AnnotationRetention.RUNTIME)
     @Target(AnnotationTarget.VALUE_PARAMETER)
-    annotation class EndpointParam(@JvmField val name: String, @JvmField val defaultValue: String = "")
+    annotation class EndpointParam(@JvmField val name: String, @JvmField val defaultValue: String = "", @JvmField val suggestedValues: StringArray = arrayOf())
 
     val moshi: Moshi
 
