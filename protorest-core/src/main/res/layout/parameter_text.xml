@@ -6,27 +6,33 @@
     android:layout_height="wrap_content"
     android:background="@color/paramBackground"
     android:orientation="horizontal"
-    android:paddingStart="10dp"
+    android:paddingBottom="2dp"
     android:paddingEnd="10dp"
-    android:paddingBottom="2dp">
+    android:paddingStart="10dp">
 
     <TextView
         android:id="@+id/paramTextLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="variable_name"
-        android:textColor="@color/paramLabelColor"
         android:paddingEnd="10dp"
         android:paddingStart="0dp"
-        android:textSize="12sp" />
+        android:textColor="@color/paramLabelColor"
+        android:textSize="12sp"
+        tools:text="variable_name" />
 
     <EditText
         android:id="@+id/paramTextValue"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="5dp"
+        android:layout_weight="1"
         android:paddingEnd="10dp"
-        tools:text="Value"
+        android:paddingStart="5dp"
         android:textColor="@color/paramTextColor"
-        android:textSize="16sp" />
+        android:textSize="14sp"
+        tools:text="Value" />
+
+    <Spinner
+        android:id="@+id/paramTextValueSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.support.v4.view.GravityCompat
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.glureau.protorest_core.rest.*
 import com.glureau.protorest_core.ui.DefaultFeatureActivity
 import com.glureau.protorest_core.ui.UiManager
@@ -38,14 +39,16 @@ class ProtoRestActivity : DefaultFeatureActivity() {
         // Manage @RestApi.Endpoint annotations to auto-generate menu + required parameters
         val features = ArrayList<RestFeature<out Any>>()
         root.api.javaClass.declaredMethods.forEach { endpoint ->
-            endpoint.annotations.filter() { it is RestApi.Endpoint }.forEach {
+            endpoint.annotations.filter { it is RestApi.Endpoint }.forEach {
                 val parameters = mutableListOf<RestParameter>()
                 endpoint.parameterAnnotations.forEach { annotations ->
                     val annParam = annotations.filter { it is RestApi.EndpointParam }.firstOrNull() as RestApi.EndpointParam?
                     if (annParam != null) {
+                        // TODO : do better than string for names...
                         val name = RestApi.EndpointParam::class.java.getMethod("name").invoke(annParam) as String
                         val defaultValue = RestApi.EndpointParam::class.java.getMethod("defaultValue").invoke(annParam) as String
-                        parameters.add(RestParameter(name, defaultValue))
+                        val suggestedValues = RestApi.EndpointParam::class.java.getMethod("suggestedValues").invoke(annParam) as StringArray
+                        parameters.add(RestParameter(name, defaultValue, suggestedValues))
                     } else {
                         parameters.add(RestParameter())
                     }
@@ -81,22 +84,18 @@ class ProtoRestActivity : DefaultFeatureActivity() {
         uiSubscription?.dispose()
         uiSubscription = updateUiSubject
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext { uiManager.updateParameters(feature) }
+                .doOnNext {
+                    uiManager.updateParameters(feature)
+                    loading.visibility = View.VISIBLE
+                }
                 .observeOn(Schedulers.io())
                 .map { feature.execute() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { uiManager.updateResult(it) }
+                .subscribe {
+                    uiManager.updateResult(it)
+                    loading.visibility = View.INVISIBLE
+                }
         updateUiSubject.onNext(true)
-//        feature.generateViews(this, parameterContainer, resultContainer)
-//                .doOnSubscribe {
-//                    bar_title.text = "${resources.getString(R.string.app_name)} / ${featureGroup.name} / ${feature.name}"
-//                    loading.visibility = View.VISIBLE
-//                }
-//                .subscribe {
-//                    loading.visibility = View.INVISIBLE
-//                    resultContainer.invalidate()
-//                }
-//        updateUiSubject.onNext()
     }
 
     // Easier to use a direct click listener
