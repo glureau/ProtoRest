@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.glureau.protorest_core.rest.*
+import com.glureau.protorest_core.rest.annotation.Endpoint
+import com.glureau.protorest_core.rest.annotation.EndpointParam
 import com.glureau.protorest_core.ui.DefaultFeatureActivity
 import com.glureau.protorest_core.ui.UiManager
 import com.glureau.protorest_core.ui.generator.parameters.ParameterViewManager
@@ -41,15 +43,15 @@ class ProtoRestActivity : DefaultFeatureActivity() {
         // Manage @RestApi.Endpoint annotations to auto-generate menu + required parameters
         val features = ArrayList<RestFeature<out Any>>()
         root.api.javaClass.declaredMethods.forEach { endpoint ->
-            endpoint.annotations.filter { it is RestApi.Endpoint }.forEach {
+            endpoint.annotations.filter { it is Endpoint }.forEach {
                 val parameters = mutableListOf<RestParameter>()
                 endpoint.parameterAnnotations.forEach { annotations ->
-                    val annParam = annotations.filter { it is RestApi.EndpointParam }.firstOrNull() as RestApi.EndpointParam?
+                    val annParam = annotations.filter { it is EndpointParam }.firstOrNull() as EndpointParam?
                     if (annParam != null) {
                         // TODO : do better than string for names...
-                        val name = RestApi.EndpointParam::class.java.getMethod("name").invoke(annParam) as String
-                        val defaultValue = RestApi.EndpointParam::class.java.getMethod("defaultValue").invoke(annParam) as String
-                        val suggestedValues = RestApi.EndpointParam::class.java.getMethod("suggestedValues").invoke(annParam) as StringArray
+                        val name = EndpointParam::class.java.getMethod("name").invoke(annParam) as String
+                        val defaultValue = EndpointParam::class.java.getMethod("defaultValue").invoke(annParam) as String
+                        val suggestedValues = EndpointParam::class.java.getMethod("suggestedValues").invoke(annParam) as StringArray
                         parameters.add(RestParameter(name, defaultValue, suggestedValues))
                     } else {
                         parameters.add(RestParameter())
