@@ -1,6 +1,5 @@
 package com.glureau.protorest_core.rest
 
-import android.support.annotation.LayoutRes
 import com.glureau.protorest_core.network.RestNetworkClient
 import com.glureau.protorest_core.rest.annotation.RestError
 import com.squareup.moshi.KotlinJsonAdapterFactory
@@ -11,7 +10,7 @@ import timber.log.Timber
 import java.util.*
 import kotlin.reflect.KClass
 
-open class RestApi(val baseApi: String, vararg adapters: Any) {
+open class RestApi(val baseApi: String, adapters: Array<Any> = emptyArray()) {
 
     private val moshi: Moshi
     private var errorClass: Class<*>
