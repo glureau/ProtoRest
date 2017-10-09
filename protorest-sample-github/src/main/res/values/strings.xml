@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Github</string>
+    <string name="no_data">Sorry, nothing interesting here&#8230;</string>
+    <string name="welcome">Browse the left menu to access your REST api</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="repository">Repository</string>
+    <string name="gists">Gists</string>
+</resources>
