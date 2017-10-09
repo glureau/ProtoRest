@@ -33,7 +33,7 @@ internal class ResultViewManager(val activity: Activity, val resultContainer: Vi
     fun <T : Any> updateResultView(data: T, dataType: KClass<*>) {
         resultContainer.removeAllViews()
         generateViewsRecursively(data, dataType, resultContainer).forEach {
-            Timber.wtf("isAttached ? $it -> ${it.parent}")
+            // TODO : Why a view is already attached to the parent ??!
             if (it.parent == null)
                 resultContainer.addView(it)
         }

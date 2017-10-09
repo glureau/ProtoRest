@@ -1,6 +1,5 @@
 package com.glureau.protorest_core.reflection
 
-import java.lang.reflect.Method
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -14,7 +13,7 @@ object Reflection {
             return listOf()
         }
     }
-    fun fieldAnnotations(kClass: KClass<*>, kCallable: KCallable<*>) = kClass.java.declaredFields.firstOrNull { it.name == kCallable.name }?.annotations
-    fun methodAnnotations(kClass: KClass<*>, method: Method) = kClass.java.declaredMethods.firstOrNull { it.name == method.name }?.annotations
+
+    fun fieldAnnotations(kClass: KClass<*>, kCallable: KCallable<*>): Array<out Annotation>? = kClass.java.declaredFields.firstOrNull { it.name == kCallable.name }?.annotations
     fun hasFieldAnnotation(annotations: Array<out Annotation>?, kClass: KClass<out Annotation>) = annotations?.firstOrNull { it.annotationClass == kClass } != null
 }

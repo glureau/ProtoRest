@@ -13,7 +13,6 @@ internal class UiManager(val activity: Activity, val resultViewManager: ResultVi
     }
 
     fun <T : Any> updateResult(result: RestResult<T>) {
-        val dataClass = result.data.javaClass.kotlin
-        resultViewManager.updateResultView(result.data, dataClass)
+        resultViewManager.updateResultView(result.data, result.data.javaClass.kotlin)
     }
 }

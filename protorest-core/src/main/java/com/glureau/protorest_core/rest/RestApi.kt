@@ -24,7 +24,12 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
     @Target(AnnotationTarget.VALUE_PARAMETER)
     annotation class EndpointParam(@JvmField val name: String, @JvmField val defaultValue: String = "", @JvmField val suggestedValues: StringArray = arrayOf())
 
-    val moshi: Moshi
+    @Retention(AnnotationRetention.RUNTIME)
+    @Target(AnnotationTarget.CLASS)
+    annotation class RestError(@JvmField val errorKClass: KClass<*>)
+
+    private val moshi: Moshi
+    private var errorClass: Class<*>
 
     init {
         var builder = Moshi.Builder()
@@ -33,19 +38,24 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
                 .add(Types.newParameterizedType(List::class.java, String::class.java).rawType, StringArrayJsonAdapter)
         adapters.forEach { builder = builder.add(it) }
         moshi = builder.build()
+
+        val restErrorAnnotation = this::class.java.declaredAnnotations.filter { it is RestError }.firstOrNull()
+        // TODO : do better than string for names...
+        errorClass = RestError::class.java.getMethod("errorKClass").invoke(restErrorAnnotation) as Class<*>
     }
 
-    fun <T> get(path: String, clazz: Class<T>): RestResult<T> {
+    fun get(path: String, clazz: Class<*>): RestResult<Any> {
         val response = RestNetworkClient.get(baseApi + path)
         Timber.d("Headers: ${response.headers()}")
         val body = response.body()?.string()
-        if (body != null) {
-            Timber.i("Receive response from server: ${response.code()} $body")
-        } else {
-            Timber.e("Error when requesting ${response.request().url()}")
-            Timber.e("Body is null, status: ${response.code()} $body")
+        if (body == null) {
+            Timber.e("Error when requesting ${response.request().url()} : body is null (status ${response.code()})")
+            return RestResult(Any())
         }
+        return parseResult(body, if (response.isSuccessful) clazz else errorClass)
+    }
 
+    private fun parseResult(body: String, clazz: Class<*>): RestResult<Any> {
         val jsonAdapter = moshi.adapter(clazz).lenient()
         val result = jsonAdapter.fromJson(body)
         Timber.i("Response parsed: %s", result)
@@ -55,5 +65,4 @@ open class RestApi(val baseApi: String, vararg adapters: Any) {
             return RestResult(result)
         }
     }
-
 }
