@@ -30,14 +30,26 @@ internal class ResultViewManager(val activity: Activity, val resultContainer: Vi
         return mapping.firstOrNull { it.first.match(kCallable.returnType.jvmErasure, Reflection.fieldAnnotations(kClass, kCallable)) }?.second as ValueViewGenerator<Any>?
     }
 
-    fun <T> updateResultView(data: T, dataType: KClass<*>) {
+    fun <T : Any> updateResultView(data: T, dataType: KClass<*>) {
         resultContainer.removeAllViews()
-        generateViewsRecursively(data, dataType, resultContainer).forEach { resultContainer.addView(it) }
+        generateViewsRecursively(data, dataType, resultContainer).forEach {
+            Timber.wtf("isAttached ? $it -> ${it.parent}")
+            if (it.parent == null)
+                resultContainer.addView(it)
+        }
     }
 
-    private fun <T> generateViewsRecursively(data: T, dataType: KClass<*>, root: ViewGroup): MutableList<View> {
+    private fun <T : Any> generateViewsRecursively(data: T, dataType: KClass<*>, root: ViewGroup): MutableList<View> {
         val views = mutableListOf<View>()
         Timber.i("Generate root views for class %s (%s)", dataType.simpleName, dataType.qualifiedName)
+        if (data is Array<*>) {
+            val (containerView, container) = layout(null, root)
+            data.filter { it != null }.forEach { elem ->
+                Timber.e("Data type $dataType")
+                generateViewsRecursively(elem!!, dataType.java.componentType.kotlin, container).forEach { container.addView(it) }
+                views.add(containerView)
+            }
+        }
         for (memberProperty in Reflection.properties(dataType)) {
             val value = memberProperty.call(data)
             if (value == null) {
@@ -72,8 +84,9 @@ internal class ResultViewManager(val activity: Activity, val resultContainer: Vi
         return views
     }
 
-    private fun layout(name: String, root: ViewGroup): Pair<View, ViewGroup> {
+    private fun layout(name: String?, root: ViewGroup): Pair<View, ViewGroup> {
         val newView = activity.layoutInflater.inflate(R.layout.field_object, root, false)
+        newView.fieldObjectLabel.visibility = if (name == null) View.GONE else View.VISIBLE
         newView.fieldObjectLabel.text = name
         return newView to newView.fieldObjectContainer
     }
