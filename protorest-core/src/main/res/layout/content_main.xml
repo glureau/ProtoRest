@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/resultContainer"
     android:layout_width="match_parent"
@@ -9,10 +8,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="Browse the left menu to access your REST api" />
+        android:paddingTop="40dp"
+        android:text="@string/welcome"
+        android:textColor="@color/textColor" />
 </LinearLayout>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#795548</color>
-    <color name="colorPrimaryDark">#4b2c20</color>
-    <color name="colorAccent">#e53935</color>
-    <color name="fieldBackground">#bcaaa4</color>
-    <color name="subFieldBackground">#8d6e63</color>
-    <color name="textLabelColor">#6d4c41</color>
-    <color name="textColor">#3e2723</color>
-    <color name="paramBackground">#ef9a9a</color>
-    <color name="paramLabelColor">#c62828</color>
-    <color name="paramTextColor">#ab000d</color>
+    <color name="colorPrimary">#00bcd4</color>
+    <color name="colorPrimaryDark">#008ba3</color>
+    <color name="colorAccent">#ff6e40</color>
+    <color name="background">#757575</color>
+    <color name="fieldBackground">#eeeeee</color>
+    <color name="subFieldBackground">#bdbdbd</color>
+    <color name="textLabelColor">#424242</color>
+    <color name="textColor">#212121</color>
+    <color name="paramBackground">#b2ebf2</color>
+    <color name="paramLabelColor">#00838f</color>
+    <color name="paramTextColor">#006064</color>
 
 </resources>

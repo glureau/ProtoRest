@@ -32,10 +32,15 @@ internal class ResultViewManager(val activity: Activity, val resultContainer: Vi
 
     fun <T : Any> updateResultView(data: T, dataType: KClass<*>) {
         resultContainer.removeAllViews()
-        generateViewsRecursively(data, dataType, resultContainer).forEach {
-            // TODO : Why a view is already attached to the parent ??!
-            if (it.parent == null)
-                resultContainer.addView(it)
+        val generatedViews = generateViewsRecursively(data, dataType, resultContainer)
+        if (generatedViews.isEmpty()) {
+            activity.layoutInflater.inflate(R.layout.no_data, resultContainer)
+        } else {
+            generatedViews.forEach {
+                // TODO : Why a view is already attached to the parent ??!
+                if (it.parent == null)
+                    resultContainer.addView(it)
+            }
         }
     }
 
@@ -45,7 +50,6 @@ internal class ResultViewManager(val activity: Activity, val resultContainer: Vi
         if (data is Array<*>) {
             val (containerView, container) = layout(null, root)
             data.filter { it != null }.forEach { elem ->
-                Timber.e("Data type $dataType")
                 generateViewsRecursively(elem!!, dataType.java.componentType.kotlin, container).forEach { container.addView(it) }
                 views.add(containerView)
             }
