@@ -7,9 +7,9 @@ import timber.log.Timber
 
 
 open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
-    lateinit var setup: MutableList<RestFeatureGroup>
+    lateinit var setup: List<RestFeatureGroup>
     fun setup(vararg groups: RestFeatureGroup) {
-        setup = groups.toMutableList()
+        setup = groups.toList()
     }
 
     /**

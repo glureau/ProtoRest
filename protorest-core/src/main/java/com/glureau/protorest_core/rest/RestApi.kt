@@ -1,6 +1,8 @@
 package com.glureau.protorest_core.rest
 
+import android.support.annotation.LayoutRes
 import com.glureau.protorest_core.network.RestNetworkClient
+import com.glureau.protorest_core.rest.annotation.RestError
 import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Rfc3339DateJsonAdapter
@@ -10,23 +12,6 @@ import java.util.*
 import kotlin.reflect.KClass
 
 open class RestApi(val baseApi: String, vararg adapters: Any) {
-
-    @Retention(AnnotationRetention.RUNTIME)
-    @Target(AnnotationTarget.FIELD)
-    annotation class Image
-
-    @Retention(AnnotationRetention.RUNTIME)
-    @Target(AnnotationTarget.FUNCTION)
-    @SuppressWarnings("unused")
-    annotation class Endpoint(@JvmField val returnType: KClass<*>) // TODO : pass the KClass as generic of the annotation, for more flexibility if required
-
-    @Retention(AnnotationRetention.RUNTIME)
-    @Target(AnnotationTarget.VALUE_PARAMETER)
-    annotation class EndpointParam(@JvmField val name: String, @JvmField val defaultValue: String = "", @JvmField val suggestedValues: StringArray = arrayOf())
-
-    @Retention(AnnotationRetention.RUNTIME)
-    @Target(AnnotationTarget.CLASS)
-    annotation class RestError(@JvmField val errorKClass: KClass<*>)
 
     private val moshi: Moshi
     private var errorClass: Class<*>

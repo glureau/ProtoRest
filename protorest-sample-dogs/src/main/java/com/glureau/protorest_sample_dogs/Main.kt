@@ -3,6 +3,7 @@ package com.glureau.protorest_sample_dogs
 import com.glureau.protorest_core.ProtoRestApplication
 import com.glureau.protorest_core.rest.RestApi
 import com.glureau.protorest_core.rest.StringArray
+import com.glureau.protorest_core.rest.annotation.Image
 
 // Inspired from 'Dog API' https://dog.ceo/dog-api/#all
 class MainApplication : ProtoRestApplication<DogApi>(api = DogApi()) {
@@ -22,7 +23,7 @@ class MainApplication : ProtoRestApplication<DogApi>(api = DogApi()) {
 }
 
 data class BreedList(val message: StringArray)
-data class PictureList(@RestApi.Image val message: StringArray)
+data class PictureList(@Image val message: StringArray)
 
 class DogApi : RestApi("https://dog.ceo/api/") {
     fun breeds() = get("breeds/list", BreedList::class.java)
