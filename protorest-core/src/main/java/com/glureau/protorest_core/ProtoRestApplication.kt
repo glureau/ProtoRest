@@ -4,10 +4,11 @@ import android.app.Application
 import com.glureau.protorest_core.rest.*
 import com.squareup.leakcanary.LeakCanary
 import timber.log.Timber
+import kotlin.reflect.KClass
 
-
-open class ProtoRestApplication<out A : RestApi>(val api: A) : Application() {
-    lateinit var setup: List<RestFeatureGroup>
+// TODO : Remove the toCustomize and use reflection/code generation to get classes by annotations
+open class ProtoRestApplication<out A : RestApi>(val api: A, val toCustomize: Array<KClass<*>> = emptyArray()) : Application() {
+    var setup: List<RestFeatureGroup> = listOf()
     fun setup(vararg groups: RestFeatureGroup) {
         setup = groups.toList()
     }

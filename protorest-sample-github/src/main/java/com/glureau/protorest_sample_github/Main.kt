@@ -6,7 +6,7 @@ import com.glureau.protorest_core.rest.annotation.*
 import java.util.*
 
 // Define your entry point by filling the api to the ProtoRestApplication
-class MainApplication : ProtoRestApplication<GithubUserApi>(api = GithubUserApi())
+class MainApplication : ProtoRestApplication<GithubUserApi>(api = GithubUserApi(), toCustomize = arrayOf(SimpleGithubUser::class))
 
 // Pick only interesting fields
 @CustomView(R.layout.user)
