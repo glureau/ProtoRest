@@ -13,7 +13,7 @@ class MainApplication : ProtoRestApplication<GithubUserApi>(api = GithubUserApi(
 data class SimpleGithubUser(
         val login: String?,
         val name: String?, @Image val avatar_url: String?,
-        val created_at: Date?, val url: String?, val company: String?, val location: String?,
+        val created_at: Date?, val html_url: String?, val company: String?, val location: String?,
         val followers: Int?, val following: Int?, val public_repos: Int?, val public_gists: Int?)
 
 data class SimpleGithubOrganization(val url: String?, val repos_url: String?, @Image val avatar_url: String?, val description: String?, val name: String?, val html_url: String?)
