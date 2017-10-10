@@ -7,45 +7,50 @@ import java.util.*
 
 // Define your entry point by filling the api to the ProtoRestApplication
 class MainApplication : ProtoRestApplication<GithubUserApi>(api = GithubUserApi(),
-        toCustomize = arrayOf(SimpleGithubUser::class, SimpleGithubOrganization::class))
+        toCustomize = arrayOf(GithubUser::class, GithubOrganization::class, GithubRepository::class, GithubError::class))
 
 // Pick only interesting fields
 @CustomView(R.layout.user)
-data class SimpleGithubUser(
+data class GithubUser(
         val login: String?,
         val name: String?, @Image val avatar_url: String?,
         val created_at: Date?, val html_url: String?, val company: String?, val location: String?,
         val followers: Int?, val following: Int?, val public_repos: Int?, val public_gists: Int?)
 
 @CustomView(R.layout.organization)
-data class SimpleGithubOrganization(val name: String?, @Image val avatar_url: String?,
-                                    val created_at: Date?, val description: String?, val html_url: String?, val blog: String?,
-                                    val public_repos: Int?, val public_gists: Int?)
+data class GithubOrganization(val name: String?, @Image val avatar_url: String?,
+                              val created_at: Date?, val description: String?, val html_url: String?, val blog: String?,
+                              val public_repos: Int?, val public_gists: Int?)
 
-data class SimpleGithubRepository(val name: String, val owner: SimpleGithubUser?, val html_url: String?, val description: String?, val fork: Boolean)
+@CustomView(R.layout.repository)
+data class GithubRepository(val full_name: String,
+                            val description: String?,val html_url: String?,val language: String?,
+                            val owner: GithubUser?,
+                            val open_issues_count: Int?, val stargazers_count: Int?, val forks_count: Int?, val size: Int?)
 
+@CustomView(R.layout.error)
 data class GithubError(val message: String, val documentation_url: String?)
 
-typealias SimpleGithubRepositoryList = Array<SimpleGithubRepository>
+typealias SimpleGithubRepositoryList = Array<GithubRepository>
 
 @RestError(GithubError::class)
 class GithubUserApi : RestApi("https://api.github.com/") {
-    @Endpoint(SimpleGithubUser::class) fun user(
+    @Endpoint(GithubUser::class) fun user(
             @EndpointParam(name = "login", defaultValue = "glureau", suggestedValues = arrayOf("glureau", "jakewharton", "swankjesse", "pyricau", "alecholmes", "akarnokd")) login: String)
-            = get("users/$login", SimpleGithubUser::class.java)
+            = get("users/$login", GithubUser::class.java)
 
-    @Endpoint(SimpleGithubOrganization::class) fun organization(
+    @Endpoint(GithubOrganization::class) fun organization(
             @EndpointParam(name = "org", suggestedValues = arrayOf("github", "google", "square", "apple", "microsoft")) org: String)
-            = get("orgs/$org", SimpleGithubOrganization::class.java)
+            = get("orgs/$org", GithubOrganization::class.java)
 
-    @Endpoint(SimpleGithubRepository::class) fun repository(
+    @Endpoint(GithubRepository::class) fun repository(
             @EndpointParam(name = "login", defaultValue = "glureau") login: String,
             @EndpointParam(name = "repos", defaultValue = "protorest") repos: String)
-            = get("repos/$login/$repos", SimpleGithubRepository::class.java)
+            = get("repos/$login/$repos", GithubRepository::class.java)
 
     @Endpoint(SimpleGithubRepositoryList::class) fun userRepositories(
             @EndpointParam(name = "login", defaultValue = "glureau", suggestedValues = arrayOf("glureau", "jakewharton", "swankjesse", "pyricau", "alecholmes", "akarnokd")) login: String)
-            = get("users/$login/repos?affiliation=owner", SimpleGithubRepositoryList::class.java)
+            = get("users/$login/repos?affiliation=owner&sort=updated", SimpleGithubRepositoryList::class.java)
 }
 
 

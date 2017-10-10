@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@color/fieldBackground"
+    android:elevation="2dp"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/protorest_full_name_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="JakeWharton/kotterknife" />
+
+    <TextView
+        android:id="@+id/protorest_description_value"
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_full_name_value"
+        tools:text="View injection library for Android" />
+
+    <TextView
+        android:id="@+id/protorest_html_url_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:autoLink="web"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_description_value"
+        tools:text="https://github.com/JakeWharton/kotterknife" />
+
+    <TextView
+        android:id="@+id/language_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/language"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_html_url_value" />
+
+    <TextView
+        android:id="@+id/protorest_language_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/language_label"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_html_url_value"
+        tools:text="Bordeaux" />
+
+    <TextView
+        android:id="@+id/protorest_open_issues_count_value"
+        android:layout_width="77dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_language_value"
+        tools:text="402" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/issues"
+        app:layout_constraintEnd_toEndOf="@+id/protorest_open_issues_count_value"
+        app:layout_constraintStart_toStartOf="@+id/protorest_open_issues_count_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_open_issues_count_value" />
+
+    <TextView
+        android:id="@+id/protorest_stargazers_count_value"
+        android:layout_width="78dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/protorest_open_issues_count_value"
+        app:layout_constraintTop_toTopOf="@+id/protorest_open_issues_count_value"
+        tools:text="5" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/stargazers"
+        app:layout_constraintEnd_toEndOf="@+id/protorest_stargazers_count_value"
+        app:layout_constraintStart_toStartOf="@+id/protorest_stargazers_count_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_stargazers_count_value" />
+
+    <TextView
+        android:id="@+id/protorest_forks_count_value"
+        android:layout_width="77dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/protorest_stargazers_count_value"
+        app:layout_constraintTop_toTopOf="@+id/protorest_stargazers_count_value"
+        tools:layout_editor_absoluteY="131dp"
+        tools:text="11" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/forks"
+        app:layout_constraintEnd_toEndOf="@+id/protorest_forks_count_value"
+        app:layout_constraintStart_toStartOf="@+id/protorest_forks_count_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_forks_count_value" />
+
+    <TextView
+        android:id="@+id/protorest_size_value"
+        android:layout_width="78dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/protorest_forks_count_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_language_value"
+        app:layout_constraintTop_toTopOf="@+id/protorest_forks_count_value"
+        tools:text="1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/size"
+        app:layout_constraintEnd_toEndOf="@+id/protorest_size_value"
+        app:layout_constraintStart_toStartOf="@+id/protorest_size_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_size_value" />
+
+</android.support.constraint.ConstraintLayout>

@@ -6,4 +6,11 @@
     <string name="following">Following</string>
     <string name="repository">Repository</string>
     <string name="gists">Gists</string>
+    <string name="issues">Issues</string>
+    <string name="language">Language</string>
+    <string name="stargazers">Stargazers</string>
+    <string name="forks">Forks</string>
+    <string name="error">Error</string>
+    <string name="subscribers">Subscribers</string>
+    <string name="size">Size</string>
 </resources>
