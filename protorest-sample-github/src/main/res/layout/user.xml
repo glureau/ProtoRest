@@ -12,7 +12,7 @@
     android:padding="10dp">
 
     <ImageView
-        android:id="@+id/protorest_avatar_url_image"
+        android:id="@+id/protorest_avatar_url_value"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginStart="8dp"
@@ -31,28 +31,28 @@
         android:fontFamily="@font/robotocondensed_bold"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_image"
+        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_value"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="My Super Name" />
 
     <TextView
-        android:id="@+id/protorest_foo_value"
+        android:id="@+id/protorest_created_at_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_image"
+        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_value"
         app:layout_constraintTop_toBottomOf="@+id/protorest_name_value"
         tools:text="Member since 1 avr. 2010" />
 
     <TextView
-        android:id="@+id/protorest_url_value"
+        android:id="@+id/protorest_html_url_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:autoLink="web"
-        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_image"
-        app:layout_constraintTop_toBottomOf="@+id/protorest_foo_value"
+        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_created_at_value"
         tools:text="https://glureau.com" />
 
     <TextView
@@ -60,16 +60,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_image"
-        app:layout_constraintTop_toBottomOf="@+id/protorest_url_value"
+        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_html_url_value"
         tools:text="BeTomorrow" />
 
     <TextView
-        android:id="@+id/protorest_city_value"
+        android:id="@+id/protorest_location_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_image"
+        app:layout_constraintStart_toEndOf="@+id/protorest_avatar_url_value"
         app:layout_constraintTop_toBottomOf="@+id/protorest_company_value"
         tools:text="Bordeaux" />
 
@@ -83,7 +83,7 @@
         android:gravity="center"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/protorest_city_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_location_value"
         tools:text="402" />
 
     <TextView
@@ -118,7 +118,7 @@
         app:layout_constraintTop_toBottomOf="@+id/protorest_following_value" />
 
     <TextView
-        android:id="@+id/protorest_repository_value"
+        android:id="@+id/protorest_public_repos_value"
         android:layout_width="77dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -135,12 +135,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/repository"
-        app:layout_constraintEnd_toEndOf="@+id/protorest_repository_value"
-        app:layout_constraintStart_toStartOf="@+id/protorest_repository_value"
-        app:layout_constraintTop_toBottomOf="@+id/protorest_repository_value" />
+        app:layout_constraintEnd_toEndOf="@+id/protorest_public_repos_value"
+        app:layout_constraintStart_toStartOf="@+id/protorest_public_repos_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_public_repos_value" />
 
     <TextView
-        android:id="@+id/protorest_gists_value"
+        android:id="@+id/protorest_public_gists_value"
         android:layout_width="78dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -149,8 +149,8 @@
         android:gravity="center"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/protorest_repository_value"
-        app:layout_constraintTop_toBottomOf="@+id/protorest_city_value"
+        app:layout_constraintStart_toEndOf="@+id/protorest_public_repos_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_location_value"
         app:layout_constraintTop_toTopOf="@+id/protorest_followers_value"
         tools:text="1" />
 
@@ -159,8 +159,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/gists"
-        app:layout_constraintEnd_toEndOf="@+id/protorest_gists_value"
-        app:layout_constraintStart_toStartOf="@+id/protorest_gists_value"
-        app:layout_constraintTop_toBottomOf="@+id/protorest_gists_value" />
+        app:layout_constraintEnd_toEndOf="@+id/protorest_public_gists_value"
+        app:layout_constraintStart_toStartOf="@+id/protorest_public_gists_value"
+        app:layout_constraintTop_toBottomOf="@+id/protorest_public_gists_value" />
 
 </android.support.constraint.ConstraintLayout>

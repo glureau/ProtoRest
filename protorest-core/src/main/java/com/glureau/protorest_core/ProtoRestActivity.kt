@@ -1,12 +1,16 @@
 package com.glureau.protorest_core
 
 import android.os.Bundle
+import android.support.annotation.LayoutRes
 import android.support.v4.view.GravityCompat
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.glureau.protorest_core.rest.*
+import com.glureau.protorest_core.rest.RestFeature
+import com.glureau.protorest_core.rest.RestFeatureGroup
+import com.glureau.protorest_core.rest.RestParameter
+import com.glureau.protorest_core.rest.RestResult
 import com.glureau.protorest_core.rest.annotation.CustomView
 import com.glureau.protorest_core.rest.annotation.Endpoint
 import com.glureau.protorest_core.rest.annotation.EndpointParam
@@ -22,7 +26,6 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import timber.log.Timber
 
 class ProtoRestActivity : DefaultFeatureActivity() {
     private lateinit var root: ProtoRestApplication<*>
@@ -63,10 +66,9 @@ class ProtoRestActivity : DefaultFeatureActivity() {
                 endpoint.parameterAnnotations.forEach { annotations ->
                     val annParam = annotations.filter { it is EndpointParam }.firstOrNull() as EndpointParam?
                     if (annParam != null) {
-                        // TODO : do better than string for names...
-                        val name = EndpointParam::class.java.getMethod("name").invoke(annParam) as String
-                        val defaultValue = EndpointParam::class.java.getMethod("defaultValue").invoke(annParam) as String
-                        val suggestedValues = EndpointParam::class.java.getMethod("suggestedValues").invoke(annParam) as StringArray
+                        val name = EndpointParam::name.get(annParam)
+                        val defaultValue = EndpointParam::defaultValue.get(annParam)
+                        val suggestedValues = EndpointParam::suggestedValues.get(annParam)
                         parameters.add(RestParameter(name, defaultValue, suggestedValues))
                     } else {
                         parameters.add(RestParameter())
@@ -88,11 +90,8 @@ class ProtoRestActivity : DefaultFeatureActivity() {
         root.toCustomize.forEach { kClass ->
             val annotation = kClass.annotations.firstOrNull { it is CustomView } ?: error("toCustomize should only contains @CustomView(...) annotated classes.")
             val matcher = CustomClassMatcherFactory.create(kClass)
-            Timber.wtf("matcher($kClass) = $matcher")
-            Timber.wtf("> matcher($kClass) = ${matcher.match(kClass, emptyArray())}")
-            Timber.wtf("annotation $annotation")
-            Timber.wtf("annotation.viewId ${(annotation as CustomView).viewId}")
-            typeToViewGenerator.add(0, matcher to CustomViewGenerator(kClass, annotation.viewId))
+            @LayoutRes val viewId = CustomView::viewId.get(annotation as CustomView)
+            typeToViewGenerator.add(0, matcher to CustomViewGenerator(kClass, viewId))
         }
 
         // Manual views
