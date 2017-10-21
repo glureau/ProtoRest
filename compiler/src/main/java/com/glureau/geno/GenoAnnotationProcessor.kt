@@ -4,11 +4,9 @@ import com.glureau.geno.annotation.*
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import java.io.File
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.Processor
-import javax.annotation.processing.RoundEnvironment
-import javax.annotation.processing.SupportedSourceVersion
+import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
+import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
@@ -18,6 +16,15 @@ import javax.tools.Diagnostic
 @AutoService(Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_6) // Generate Warnings, not sure it's very helpful :/
 class GenoAnnotationProcessor : AbstractProcessor() {
+
+    private lateinit var messager: Messager
+    private lateinit var filer: Filer
+
+    override fun init(processingEnv: ProcessingEnvironment) {
+        super.init(processingEnv)
+        messager = processingEnv.messager
+        filer = processingEnv.filer
+    }
 
     companion object {
         private val SUPPORTED_ANNOTATIONS = arrayOf(
@@ -35,32 +42,74 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     }
 
     override fun process(annotations: Set<TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        val elements = roundEnv.getElementsAnnotatedWith(CustomView::class.java)
+        generateViews(roundEnv)
 
-        val greeterClass = ClassName("com.glureau.compiler.test", "Greeter")
-        val file = FileSpec.builder("com.glureau.compiler.test", "HelloWorld")
-                .addType(TypeSpec.classBuilder("Greeter")
+        processingEnv.messager.printMessage(Diagnostic.Kind.WARNING, "A little step for me...")
+        return false
+    }
+
+    private fun generateViews(roundEnv: RoundEnvironment) {
+        val elements = roundEnv.getElementsAnnotatedWith(CustomView::class.java)
+        for (it in elements) {
+            if (it.kind != ElementKind.CLASS) {
+                messager.printMessage(Diagnostic.Kind.WARNING, "@CustomView should be use on class, skipping generation", it)
+                continue
+            }
+            generateView(it as TypeElement)
+        }
+    }
+
+
+    //    internal class GithubUserViewManager(val githubUser: GithubUser) {
+//
+//        companion object {
+//            fun inflate(activity: Activity, root: ViewGroup): View {
+//                return activity.layoutInflater.inflate(R.layout.activity_main, root, false)
+//            }
+//        }
+//
+//        fun fill(view: View) {
+//            val loginTextView: TextView? = view.findViewById(R.id.geno_login) as TextView
+//            if (loginTextView != null) {
+//                loginTextView.text = githubUser.login
+//            }
+//
+//            val nameTextView: TextView? = view.findViewById(R.id.geno_name) as TextView
+//            if (nameTextView != null) {
+//                nameTextView.text = githubUser.name
+//            }
+//
+//            val avatarImageView: TextView? = view.findViewById(R.id.geno_avatar) as ImageView
+//            if (avatarImageView != null) {
+//                GlideApp.with(activity).asBitmap().load(githubUser.avatar).into(avatarImageView)
+//            }
+//        }
+//    }
+    private fun generateView(element: TypeElement) {
+        val className = element.asClassName()
+        val simpleClassName = className.simpleName() + "ViewManager"
+        val packageName = className.packageName()
+        val instanceName = className.simpleName().decapitalize()
+        val file = FileSpec.builder(packageName, simpleClassName)
+                .addType(TypeSpec.classBuilder(simpleClassName)
                         .primaryConstructor(FunSpec.constructorBuilder()
-                                .addParameter("name", String::class)
+                                .addParameter(instanceName, className)
                                 .build())
-                        .addProperty(PropertySpec.builder("name", String::class)
-                                .initializer("name")
+                        .addProperty(PropertySpec.builder(instanceName, className)
+                                .initializer(instanceName)
                                 .build())
-                        .addFunction(FunSpec.builder("greet")
-                                .addStatement("return %S", "Hello, \$name")
-                                .returns(String::class)
+                        .companionObject(TypeSpec.companionObjectBuilder(simpleClassName)
+                                .addFunction(FunSpec.builder("inflate")
+//                                        .addParameter("view"), "")
+                                        .addStatement("return activity.layoutInflater.inflate(%S, root, false)", "R.layout.$instanceName")
+                                        .returns(String::class)
+                                        //.returns(android.view.View::class)
+                                        .build())
                                 .build())
-                        .build())
-                .addFunction(FunSpec.builder("main")
-                        .addParameter("args", String::class, KModifier.VARARG)
-                        .addStatement("%T(args[0]).greet()", greeterClass)
                         .build())
                 .build()
 
         val path = File("./compiler-test/build/generated/source/kapt/debug")
         file.writeTo(path)
-
-        processingEnv.messager.printMessage(Diagnostic.Kind.WARNING, "A little step for me...")
-        return false
     }
 }

@@ -1,0 +1,131 @@
+package com.glureau.geno.test
+@CustomView(R.layout.activity_main)
+data class GithubUser(
+        val login: String?,
+        val name: String?,
+        @Image val avatar: String?)
+
+=>
+
+
+
+package com.glureau.geno.test
+class GithubUserBindingHolder(val binding: GithubUserBinding) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(githubUser: GithubUser) {
+        binding.githubUser = githubUser
+        binding.executePendingBindings()
+    }
+}
+
+package com.glureau.geno.test
+class GithubUserBindingRecyclerViewAdapter(val githubUsers: MutableList<GithubUser> = mutableListOf()) : RecyclerView.Adapter<TrackRecyclerViewAdapter.TrackViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
+            val binding = GithubUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return GithubUserHolder(binding)
+        }
+
+        override fun onBindViewHolder(holder: GithubUserHolder, position: Int) {
+            val githubUser = githubUsers[position]
+            holder.bind(githubUser)
+        }
+
+        override fun getItemCount() = githubUsers.size
+}
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="githubUser"
+            type="com.glureau.geno.test.GithubUser" />
+
+    </data>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/githubUserLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{githubUser.login}" />
+
+        <TextView
+            android:id="@+id/githubUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{githubUser.name}" />
+
+        <ImageView
+            android:id="@+id/githubUserAvatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            geno:imageURI="@{githubUser.avatar}" />
+    </LinearLayout>
+</layout>
+
+
+
+
+
+
+
+------------------------------------------ OR
+
+class GithubUserHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    val loginTextView: TextView = view.findViewById(R.id.geno_login) as TextView
+    val nameTextView: TextView = view.findViewById(R.id.geno_name) as TextView
+    val avatarImageView: ImageView = view.findViewById(R.id.geno_avatar) as ImageView
+}
+class GithubUserRecyclerViewAdapter(val context: Context, val githubUsers: MutableList<GithubUser> = mutableListOf()) : RecyclerView.Adapter<TrackRecyclerViewAdapter.TrackViewHolder>() {
+    val layoutInflater = LayoutInflater.from(context)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
+        val view = layoutInflater.inflate(R.layout_user_github)
+        return GithubUserHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: GithubUserHolder, position: Int) {
+        val githubUser = githubUsers[position]
+        holder.loginTextView.text = githubUser.login
+        holder.nameTextView.text = githubUser.name
+        GlideApp.with(activity).asBitmap().load(githubUser.avatar).into(holder.avatarImageView)
+    }
+
+    override fun getItemCount() = githubUsers.size
+}
+
+
+
+------------------------------------------ OR Simple ?
+
+internal class GithubUserViewManager(val githubUser: GithubUser) {
+
+    companion object {
+        fun inflate(activity: Activity, root: ViewGroup): View {
+            return activity.layoutInflater.inflate(R.layout.activity_main, root, false)
+        }
+    }
+
+    fun fill(view: View) {
+        val loginTextView: TextView? = view.findViewById(R.id.geno_login) as TextView
+        if (loginTextView != null) {
+            loginTextView.text = githubUser.login
+        }
+
+        val nameTextView: TextView? = view.findViewById(R.id.geno_name) as TextView
+        if (nameTextView != null) {
+            nameTextView.text = githubUser.name
+        }
+
+        val avatarImageView: TextView? = view.findViewById(R.id.geno_avatar) as ImageView
+        if (avatarImageView != null) {
+            GlideApp.with(activity).asBitmap().load(githubUser.avatar).into(avatarImageView)
+        }
+    }
+}

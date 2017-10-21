@@ -1,25 +1,26 @@
 package com.glureau.compiler.test
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import com.glureau.geno.annotation.CustomView
 import com.glureau.geno.annotation.Image
 import com.glureau.test.R
-import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
+
+@CustomView(R.layout.activity_main)
+data class GithubUser(
+        val login: String?,
+        val name: String?,
+        @Image val avatar: String?)
 
 class MainActivity : AppCompatActivity() {
 
-    @CustomView(R.layout.activity_main)
-    data class GithubUser(
-            val login: String?,
-            val name: String?, @Image val avatar_url: String?,
-            val created_at: Date?, val html_url: String?, val company: String?, val location: String?,
-            val followers: Int?, val following: Int?, val public_repos: Int?, val public_gists: Int?)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        hello_world.text = Greeter("me").greet()
+//        setContentView(R.layout.activity_main)
+        val user = GithubUser("geno", "♡♪!?", "https://www.mariowiki.com/images/thumb/5/58/Geno_SMRPG.gif/200px-Geno_SMRPG.gif")
+        val viewManager = GithubUserViewManager(user)
+        val view = GithubUserViewManager.inflate(this)
+        viewManager.fill(view)
+        setContentView(view)
     }
 }
