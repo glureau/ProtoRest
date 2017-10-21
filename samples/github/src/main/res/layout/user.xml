@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@color/fieldBackground"
+    android:orientation="vertical"
+    android:elevation="2dp"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/geno_avatar_url_value"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded"
+        android:src="@drawable/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/geno_name_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/geno_avatar_url_value"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="My Super Name" />
+
+    <TextView
+        android:id="@+id/geno_created_at_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/geno_avatar_url_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_name_value"
+        tools:text="Member since 1 avr. 2010" />
+
+    <TextView
+        android:id="@+id/geno_html_url_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:autoLink="web"
+        app:layout_constraintStart_toEndOf="@+id/geno_avatar_url_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_created_at_value"
+        tools:text="https://glureau.com" />
+
+    <TextView
+        android:id="@+id/geno_company_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toEndOf="@+id/geno_avatar_url_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_html_url_value"
+        tools:text="BeTomorrow" />
+
+    <TextView
+        android:id="@+id/geno_location_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toEndOf="@+id/geno_avatar_url_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_company_value"
+        tools:text="Bordeaux" />
+
+    <TextView
+        android:id="@+id/geno_followers_value"
+        android:layout_width="77dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/geno_location_value"
+        tools:text="402" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/followers"
+        app:layout_constraintEnd_toEndOf="@+id/geno_followers_value"
+        app:layout_constraintStart_toStartOf="@+id/geno_followers_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_followers_value" />
+
+    <TextView
+        android:id="@+id/geno_following_value"
+        android:layout_width="78dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/geno_followers_value"
+        app:layout_constraintTop_toTopOf="@+id/geno_followers_value"
+        tools:text="5" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/following"
+        app:layout_constraintEnd_toEndOf="@+id/geno_following_value"
+        app:layout_constraintStart_toStartOf="@+id/geno_following_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_following_value" />
+
+    <TextView
+        android:id="@+id/geno_public_repos_value"
+        android:layout_width="77dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/geno_following_value"
+        app:layout_constraintTop_toTopOf="@+id/geno_followers_value"
+        tools:layout_editor_absoluteY="131dp"
+        tools:text="11" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/repository"
+        app:layout_constraintEnd_toEndOf="@+id/geno_public_repos_value"
+        app:layout_constraintStart_toStartOf="@+id/geno_public_repos_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_public_repos_value" />
+
+    <TextView
+        android:id="@+id/geno_public_gists_value"
+        android:layout_width="78dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/geno_public_repos_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_location_value"
+        app:layout_constraintTop_toTopOf="@+id/geno_followers_value"
+        tools:text="1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/gists"
+        app:layout_constraintEnd_toEndOf="@+id/geno_public_gists_value"
+        app:layout_constraintStart_toStartOf="@+id/geno_public_gists_value"
+        app:layout_constraintTop_toBottomOf="@+id/geno_public_gists_value" />
+
+</android.support.constraint.ConstraintLayout>

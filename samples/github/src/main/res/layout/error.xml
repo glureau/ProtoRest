@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@color/fieldBackground"
+    android:elevation="2dp"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/error_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/github_404"
+        android:contentDescription="@string/error"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/geno_message_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/robotocondensed_bold"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_banner"
+        tools:text="API rate limit exceeded for 10.123.123.123. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/geno_documentation_url_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:autoLink="web"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/geno_message_value"
+        tools:text="https://developer.github.com/v3/#rate-limiting" />
+
+</android.support.constraint.ConstraintLayout>
