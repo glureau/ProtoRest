@@ -2,8 +2,6 @@ package com.glureau.geno.old.rest
 
 import com.glureau.geno.old.network.RestNetworkClient
 import com.glureau.geno.old.rest.annotation.RestError
-import com.glureau.geno.old.rest.RestResult
-import com.glureau.geno.old.rest.StringArrayJsonAdapter
 import com.squareup.moshi.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Rfc3339DateJsonAdapter
@@ -14,7 +12,7 @@ import java.util.*
 open class RestApi(val baseApi: String, adapters: Array<Any> = emptyArray()) {
 
     private val moshi: Moshi
-    private var errorClass: Class<*>
+    private lateinit var errorClass: Class<*>
 
     init {
         var builder = Moshi.Builder()
@@ -25,8 +23,10 @@ open class RestApi(val baseApi: String, adapters: Array<Any> = emptyArray()) {
         moshi = builder.build()
 
         val restErrorAnnotation = this::class.java.declaredAnnotations.filter { it is RestError }.firstOrNull()
-        // TODO : do better than string for names...
-        errorClass = RestError::class.java.getMethod("errorKClass").invoke(restErrorAnnotation) as Class<*>
+        if (restErrorAnnotation != null) {
+            // TODO : do better than string for names...
+            errorClass = RestError::class.java.getMethod("errorKClass").invoke(restErrorAnnotation) as Class<*>
+        }
     }
 
     fun get(path: String, clazz: Class<*>): RestResult<Any> {
