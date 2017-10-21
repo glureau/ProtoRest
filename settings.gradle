@@ -1,1 +1,1 @@
-include ':protorest-core', ':protorest-sample-github', ':protorest-sample-dogs'
+include ':geno-core', ':samples:github', ':samples:dogs'

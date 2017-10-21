@@ -1,2 +1,2 @@
-# ProtoRest ![Build status](https://travis-ci.org/glureau/ProtoRest.svg?branch=master)
+# Geno ![Build status](https://travis-ci.org/glureau/Geno.svg?branch=master)
 Work in progress
