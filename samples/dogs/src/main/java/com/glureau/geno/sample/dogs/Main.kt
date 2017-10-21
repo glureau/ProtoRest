@@ -1,4 +1,4 @@
-package com.glureau.geno_sample_dogs
+package com.glureau.geno.sample.dogs
 
 import com.glureau.geno.old.GenoApplication
 import com.glureau.geno.old.rest.RestApi

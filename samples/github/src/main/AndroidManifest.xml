@@ -2,7 +2,7 @@
     package="com.glureau.geno_sample_github">
 
     <application
-        android:name="com.glureau.geno_sample_github.MainApplication"
+        android:name="com.glureau.geno.sample.github.MainApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="Github API"

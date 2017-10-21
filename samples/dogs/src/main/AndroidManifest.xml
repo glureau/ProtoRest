@@ -2,7 +2,7 @@
     package="com.glureau.geno_sample_dogs">
 
     <application
-        android:name="com.glureau.geno_sample_dogs.MainApplication"
+        android:name="com.glureau.geno.sample.dogs.MainApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="Dog Pictures"

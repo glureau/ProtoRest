@@ -1,9 +1,9 @@
-package com.glureau.geno_sample_github
+package com.glureau.geno.sample.github
 
 import com.glureau.geno.old.GenoApplication
 import com.glureau.geno.old.rest.RestApi
 import com.glureau.geno.old.rest.annotation.*
-import com.glureau.geno.old.rest.annotation.*
+import com.glureau.geno_sample_github.R
 import java.util.*
 
 // Define your entry point by filling the api to the GenoApplication
@@ -25,7 +25,7 @@ data class GithubOrganization(val name: String?, @Image val avatar_url: String?,
 
 @CustomView(R.layout.repository)
 data class GithubRepository(val full_name: String,
-                            val description: String?,val html_url: String?,val language: String?,
+                            val description: String?, val html_url: String?, val language: String?,
                             val owner: GithubUser?,
                             val open_issues_count: Int?, val stargazers_count: Int?, val forks_count: Int?, val size: Int?)
 
