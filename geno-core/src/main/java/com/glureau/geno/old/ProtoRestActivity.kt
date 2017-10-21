@@ -67,6 +67,7 @@ class GenoActivity : DefaultFeatureActivity() {
                 endpoint.parameterAnnotations.forEach { annotations ->
                     val annParam = annotations.filter { it is EndpointParam }.firstOrNull() as EndpointParam?
                     if (annParam != null) {
+                        val nameBis = EndpointParam::class.java.getMethod("name").invoke(annParam) as String
                         val name = EndpointParam::name.get(annParam)
                         val defaultValue = EndpointParam::defaultValue.get(annParam)
                         val suggestedValues = EndpointParam::suggestedValues.get(annParam)
