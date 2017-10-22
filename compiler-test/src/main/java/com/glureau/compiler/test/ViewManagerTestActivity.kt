@@ -3,19 +3,12 @@ package com.glureau.compiler.test
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.glureau.geno.annotation.CustomView
-import com.glureau.geno.annotation.Image
+import com.glureau.compiler.test.model.GithubUser
+import com.glureau.compiler.test.model.GithubUserViewManager
 import com.glureau.geno.lib.rest.RestApi
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.*
-
-@CustomView(com.glureau.test.R::class, "user")
-data class GithubUser(
-        val name: String?, @Image val avatar_url: String?,
-        val created_at: Date?, val html_url: String?, val company: String?, val location: String?,
-        val followers: Int?, val following: Int?, val public_repos: Int?, val public_gists: Int?)
 
 class MainActivity : AppCompatActivity() {
 
