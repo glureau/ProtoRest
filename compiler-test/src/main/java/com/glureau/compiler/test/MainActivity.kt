@@ -2,6 +2,7 @@ package com.glureau.compiler.test
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import com.glureau.geno.annotation.CustomView
 import com.glureau.geno.annotation.Image
 import com.glureau.test.R
@@ -16,10 +17,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
         val user = GithubUser("geno", "♡♪!?", "https://www.mariowiki.com/images/thumb/5/58/Geno_SMRPG.gif/200px-Geno_SMRPG.gif")
         val viewManager = GithubUserViewManager(user)
-        val view = GithubUserViewManager.inflate(this)
+        val view: View = GithubUserViewManager.inflate(this, null)
         viewManager.fill(view)
         setContentView(view)
     }
