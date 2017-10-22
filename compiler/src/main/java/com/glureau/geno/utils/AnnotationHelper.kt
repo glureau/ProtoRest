@@ -1,4 +1,4 @@
-package com.glureau.geno
+package com.glureau.geno.utils
 
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue

@@ -1,4 +1,4 @@
-package com.glureau.geno
+package com.glureau.geno.utils
 
 /**
  * Created by Greg on 22/10/2017.
