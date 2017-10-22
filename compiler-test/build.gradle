@@ -40,3 +40,13 @@ dependencies {
 repositories {
     mavenCentral()
 }
+
+// Windows NTFS is locking processor jars during compilation.
+// This hack will use lockhunter to delete the locked files.
+// This is really really ugly :/
+task removeGenoCompilerBuildDirectory(type: Exec) {
+    println("Deleting Geno compiler directory")
+    commandLine 'C:\\Windows\\System32\\schtasks.exe', '/Run', '/Tn', 'removeGenoCompilerBuildDirectory'
+//    commandLine 'taskkill', '/IM', '/F', 'java.exe'
+}
+clean.dependsOn removeGenoCompilerBuildDirectory

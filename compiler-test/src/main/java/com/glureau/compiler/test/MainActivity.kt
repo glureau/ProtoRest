@@ -5,9 +5,9 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.glureau.geno.annotation.CustomView
 import com.glureau.geno.annotation.Image
-import com.glureau.test.R
+import kotlinx.android.synthetic.main.user.*
 
-@CustomView(R.layout.activity_main)
+@CustomView(com.glureau.test.R::class, "user")
 data class GithubUser(
         val login: String?,
         val name: String?,

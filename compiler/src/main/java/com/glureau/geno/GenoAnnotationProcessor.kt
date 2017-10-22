@@ -1,10 +1,14 @@
 package com.glureau.geno
 
+import com.glureau.geno.AnnotationHelper.getAnnotationClassValue
 import com.glureau.geno.annotation.*
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import java.io.File
-import java.lang.StringBuilder
+import java.io.FileReader
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
@@ -64,54 +68,29 @@ class GenoAnnotationProcessor : AbstractProcessor() {
         }
     }
 
-
-    //    internal class GithubUserViewManager(val githubUser: GithubUser) {
-//
-//        companion object {
-//            fun inflate(activity: Activity, root: ViewGroup): View {
-//                return activity.layoutInflater.inflate(R.layout.activity_main, root, false)
-//            }
-//        }
-//
-//        fun fill(view: View) {
-//            val loginTextView: TextView? = view.findViewById(R.id.geno_login) as TextView
-//            if (loginTextView != null) {
-//                loginTextView.text = githubUser.login
-//            }
-//
-//            val nameTextView: TextView? = view.findViewById(R.id.geno_name) as TextView
-//            if (nameTextView != null) {
-//                nameTextView.text = githubUser.name
-//            }
-//
-//            val avatarImageView: TextView? = view.findViewById(R.id.geno_avatar) as ImageView
-//            if (avatarImageView != null) {
-//                GlideApp.with(activity).asBitmap().load(githubUser.avatar).into(avatarImageView)
-//            }
-//        }
-//    }
     private fun generateView(element: TypeElement) {
         val className = element.asClassName()
         val simpleClassName = className.simpleName() + "ViewManager"
         val packageName = className.packageName()
         val instanceName = className.simpleName().decapitalize()
-        val viewId = element.getAnnotation(CustomView::class.java).viewId
+
+        val R = getAnnotationClassValue(element, CustomView::class, "R")
+        val viewName = element.getAnnotation(CustomView::class.java).viewName
+        val kaeImport = "kotlinx.android.synthetic.main.$viewName.view.*"
 
         val fields = element.enclosedElements.filter { it.kind == ElementKind.FIELD }.map { it as VariableElement }
-        val statementSizeGuess = 200 * fields.size
-        val fillStatement = StringBuilder(statementSizeGuess)
+        var fillBuilder = FunSpec.builder("fill")
+                .addParameter("view", ANDROID_VIEW)
         fields.forEach { field ->
             val fieldName = field.simpleName.toString()
-            val viewName = fieldName + "TextView"
-            val typeName = "android.widget.TextView"
-            fillStatement.append("""
-    val ${viewName}: $typeName? = view.findViewById(R.id.geno_$fieldName) as $typeName?
-    if (${viewName} != null) {
-      ${viewName}.text = githubUser.$fieldName
-    }""")
+            val viewKae = "geno_$fieldName"
+            fillBuilder = fillBuilder.beginControlFlow("if (view.${viewKae} != null)")
+                    .addStatement("view.${viewKae}.text = githubUser.$fieldName")
+                    .endControlFlow()
         }
 
         val file = FileSpec.builder(packageName, simpleClassName)
+                .indent("    ")
                 .addType(TypeSpec.classBuilder(simpleClassName)
                         .primaryConstructor(FunSpec.constructorBuilder()
                                 .addParameter(instanceName, className)
@@ -119,22 +98,77 @@ class GenoAnnotationProcessor : AbstractProcessor() {
                         .addProperty(PropertySpec.builder(instanceName, className)
                                 .initializer(instanceName)
                                 .build())
+                        .addFunction(fillBuilder.build())
                         .companionObject(TypeSpec.companionObjectBuilder(simpleClassName)
                                 .addFunction(FunSpec.builder("inflate")
                                         .addParameter("activity", ANDROID_ACTIVITY)
                                         .addParameter("root", ANDROID_VIEW_GROUP.asNullable())
-                                        .addStatement("return activity.layoutInflater.inflate($viewId /*R.layout.$instanceName*/, root, false)")
+                                        .addStatement("return activity.layoutInflater.inflate($R.layout.$viewName, root, false)")
                                         .returns(ANDROID_VIEW)
                                         .build())
-                                .build())
-                        .addFunction(FunSpec.builder("fill")
-                                .addParameter("view", ANDROID_VIEW)
-                                .addStatement(fillStatement.toString())
                                 .build())
                         .build())
                 .build()
 
         val path = File("./compiler-test/build/generated/source/kapt/debug")
+        messager.printMessage(Diagnostic.Kind.WARNING, "Writing class -----------------------------------------------------------------------------")
         file.writeTo(path)
+
+        val reader = FileReader(path.absolutePath + "/" + file.packageName.replace(".", "/") + "/" + file.name + ".kt")
+        val fileContent = ImportInjection.injectImport(reader.readText(), kaeImport)
+        Files.write(Paths.get(path.absolutePath + "/" + file.packageName.replace(".", "/") + "/" + file.name + ".kt"), fileContent.toByteArray(), StandardOpenOption.TRUNCATE_EXISTING)
+
+/*
+        messager.printMessage(Diagnostic.Kind.WARNING, "XML -----------------------------------------------------------------------------")
+
+        val resDir = File("./compiler-test/build/generated/resource/kapt/debug")
+        resDir.mkdirs()
+        val pathXml = File(resDir.path + "/$instanceName.xml")
+        val writer = FileWriter(pathXml)
+        writer.write("""
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="githubUser"
+            type="com.glureau.geno.test.GithubUser" />
+
+    </data>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/githubUserLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{githubUser.login}" />
+
+        <TextView
+            android:id="@+id/githubUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{githubUser.name}" />
+
+        <ImageView
+            android:id="@+id/githubUserAvatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            geno:imageURI="@{githubUser.avatar}" />
+    </LinearLayout>
+</layout>""")
+        writer.close()
+        messager.printMessage(Diagnostic.Kind.ERROR, "Writing XML in $pathXml")
+//        OutputStreamWriter(Files.newOutputStream(outputPath), StandardCharsets.UTF_8).use { writer -> writeTo(writer) }
+*/
     }
+}
+
+private fun FunSpec.Builder.addStatements(statements: MutableList<String>): FunSpec.Builder {
+    statements.forEach { addStatement(it) }
+    return this
 }
