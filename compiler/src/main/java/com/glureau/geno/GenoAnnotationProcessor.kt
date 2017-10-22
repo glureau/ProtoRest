@@ -12,7 +12,7 @@ import javax.tools.Diagnostic
 /**
  * Created by Greg on 21/10/2017.
  */
-@AutoService(Processor::class)
+@AutoService(Processor::class) // Some issues with META-INF generation, the META-INF is duplicated in the project to avoid that...
 @SupportedSourceVersion(SourceVersion.RELEASE_6) // Generate Warnings, not sure it's very helpful :/
 class GenoAnnotationProcessor : AbstractProcessor() {
 
@@ -43,8 +43,6 @@ class GenoAnnotationProcessor : AbstractProcessor() {
 
     override fun process(annotations: Set<TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         generateViews(roundEnv)
-
-        processingEnv.messager.printMessage(Diagnostic.Kind.WARNING, "A little step for me...")
         return false
     }
 

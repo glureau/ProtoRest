@@ -6,7 +6,9 @@ import com.squareup.kotlinpoet.ClassName
  * Created by Greg on 22/10/2017.
  */
 object AndroidClasses {
-    val ANDROID_VIEW = ClassName("android.view", "View")
-    val ANDROID_VIEW_GROUP = ClassName("android.view", "ViewGroup")
-    val ANDROID_ACTIVITY = ClassName("android.app", "Activity")
+    val VIEW = ClassName("android.view", "View")
+    val VIEW_GROUP = ClassName("android.view", "ViewGroup")
+    val ACTIVITY = ClassName("android.app", "Activity")
+    val FRAGMENT = ClassName("android.app", "Fragment")
+    val IMAGE_VIEW = ClassName("android.widget", "ImageView")
 }

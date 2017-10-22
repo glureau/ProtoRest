@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">compiler-test</string>
+    <string name="loading">Loading...</string>
+    <string name="ellipsis">...</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="gists">Gists</string>
+    <string name="repository">Repository</string>
 </resources>

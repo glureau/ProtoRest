@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
@@ -29,12 +30,22 @@ android {
         targetCompatibility JavaVersion.VERSION_1_6
     }
 }
+
 dependencies {
     implementation project(':annotation')
     kapt project(':compiler')
+    implementation project(':lib')
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    // Reactive Extensions
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.0.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    // Glide (should be transitively loaded from :lib)
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
 }
 
 repositories {
@@ -49,4 +60,4 @@ task removeGenoCompilerBuildDirectory(type: Exec) {
     commandLine 'C:\\Windows\\System32\\schtasks.exe', '/Run', '/Tn', 'removeGenoCompilerBuildDirectory'
 //    commandLine 'taskkill', '/IM', '/F', 'java.exe'
 }
-clean.dependsOn removeGenoCompilerBuildDirectory
+//clean.dependsOn removeGenoCompilerBuildDirectory

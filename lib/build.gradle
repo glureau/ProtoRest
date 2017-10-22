@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    // Android Support
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    kapt 'com.github.bumptech.glide:compiler:4.2.0'
+    implementation("com.github.bumptech.glide:recyclerview-integration:4.2.0") {
+        // Excludes the support library because it's already included by Glide.
+        transitive = false
+    }
+
+    // Network
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.moshi:moshi:1.5.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
+    implementation 'com.squareup.moshi:moshi-adapters:1.5.0'
+
+    // Logging
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+}
