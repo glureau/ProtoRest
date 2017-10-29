@@ -1,6 +1,7 @@
 package com.glureau.geno
 
 import com.glureau.geno.annotation.*
+import com.glureau.geno.generators.BindingHolderGenerator
 import com.glureau.geno.generators.ViewManagerGenerator
 import com.google.auto.service.AutoService
 import javax.annotation.processing.*
@@ -19,12 +20,14 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     private lateinit var messager: Messager
     private lateinit var filer: Filer
     private lateinit var viewManagerGenerator: ViewManagerGenerator
+    private lateinit var bindingHolderGenerator: BindingHolderGenerator
 
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
         messager = processingEnv.messager
         filer = processingEnv.filer
         viewManagerGenerator = ViewManagerGenerator(messager)
+        bindingHolderGenerator = BindingHolderGenerator(messager)
     }
 
     companion object {
@@ -54,6 +57,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
                 continue
             }
             viewManagerGenerator.generateView(it as TypeElement)
+            bindingHolderGenerator.generateView(it)
         }
     }
 }

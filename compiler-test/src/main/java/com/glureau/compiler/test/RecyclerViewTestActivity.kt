@@ -4,13 +4,15 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.glureau.compiler.test.model.GithubUser
+import com.glureau.compiler.test.model.GithubUserBindingHolder
 import com.glureau.compiler.test.model.GithubUserViewManager
+import com.glureau.compiler.test.model.SimpleGithubUser
 import com.glureau.geno.lib.rest.RestApi
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class ViewManagerTestActivity : AppCompatActivity() {
+class RecyclerViewTestActivity : AppCompatActivity() {
 
     val api = RestApi("https://api.github.com/")
 
@@ -22,9 +24,11 @@ class ViewManagerTestActivity : AppCompatActivity() {
 
         Observable.just(1)
                 .observeOn(Schedulers.io())
-                .map { api.get("users/jakewharton", GithubUser::class.java) }
-                .map { GithubUserViewManager(it.data as GithubUser) }
+                .map { api.get("orgs/square/members", Array<SimpleGithubUser>::class.java) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { it.fill(this, view) }
+                .subscribe {
+                    GithubUserBindingHolder(it)
+                }
+
     }
 }

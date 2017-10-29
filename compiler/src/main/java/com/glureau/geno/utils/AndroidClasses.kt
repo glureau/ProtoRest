@@ -11,4 +11,6 @@ object AndroidClasses {
     val ACTIVITY = ClassName("android.app", "Activity")
     val FRAGMENT = ClassName("android.app", "Fragment")
     val IMAGE_VIEW = ClassName("android.widget", "ImageView")
+    val RECYCLER_VIEW = ClassName("android.support.v7.widget", "RecyclerView")
+    val RECYCLER_VIEW_HOLDER = ClassName("android.support.v7.widget", "RecyclerView", "ViewHolder")
 }
