@@ -3,6 +3,7 @@
     package="com.glureau.test">
 
     <application
+        android:name="com.glureau.compiler.test.TestApplication"
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true"

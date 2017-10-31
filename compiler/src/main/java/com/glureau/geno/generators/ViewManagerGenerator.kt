@@ -18,7 +18,7 @@ import javax.tools.Diagnostic
 /**
  * Created by Greg on 22/10/2017.
  */
-class ViewManagerGenerator(val messager: Messager) {
+class ViewManagerGenerator(private val messager: Messager) {
 
     fun generateView(element: TypeElement) {
         val className = element.asClassName()

@@ -24,6 +24,9 @@ android {
         }
     }
 
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -50,4 +53,8 @@ dependencies {
 
     // Logging
     implementation 'com.jakewharton.timber:timber:4.5.1'
+
+    // UI
+    kapt 'com.android.databinding:compiler:3.0.0'
+
 }
