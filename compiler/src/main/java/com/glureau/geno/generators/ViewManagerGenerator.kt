@@ -18,6 +18,7 @@ import javax.tools.Diagnostic
 /**
  * Created by Greg on 22/10/2017.
  */
+@Deprecated("You should use ViewHolder / RecyclerView instead")
 class ViewManagerGenerator(private val messager: Messager) {
 
     fun generateView(element: TypeElement) {

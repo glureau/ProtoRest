@@ -11,7 +11,6 @@ import com.glureau.test.R
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 
 class RecyclerViewTestActivity : AppCompatActivity() {
 
@@ -27,7 +26,8 @@ class RecyclerViewTestActivity : AppCompatActivity() {
         Observable.just(1)
                 .observeOn(Schedulers.io())
                 .map {
-                    api.get("orgs/google/members?per_page=1000", Array<SimpleGithubUser>::class.java) }
+                    api.get("orgs/google/members?per_page=1000", Array<SimpleGithubUser>::class.java)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     val users = (it.data as Array<SimpleGithubUser>).toMutableList()

@@ -3,9 +3,9 @@ package com.glureau.geno
 import com.glureau.geno.annotation.*
 import com.glureau.geno.generators.BindingHolderGenerator
 import com.glureau.geno.generators.BindingRecyclerViewAdapterGenerator
-import com.glureau.geno.generators.ViewManagerGenerator
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.asClassName
+import org.w3c.dom.Document
 import java.io.File
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
@@ -23,7 +23,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
 
     private lateinit var messager: Messager
     private lateinit var filer: Filer
-    private lateinit var viewManagerGenerator: ViewManagerGenerator
+//    private lateinit var viewManagerGenerator: ViewManagerGenerator
     private lateinit var bindingHolderGenerator: BindingHolderGenerator
     private lateinit var bindingRecyclerViewAdapterGenerator: BindingRecyclerViewAdapterGenerator
 
@@ -31,7 +31,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
         super.init(processingEnv)
         messager = processingEnv.messager
         filer = processingEnv.filer
-        viewManagerGenerator = ViewManagerGenerator(messager)
+//        viewManagerGenerator = ViewManagerGenerator(messager)
         bindingHolderGenerator = BindingHolderGenerator(messager)
         bindingRecyclerViewAdapterGenerator = BindingRecyclerViewAdapterGenerator(messager)
     }
@@ -62,9 +62,9 @@ class GenoAnnotationProcessor : AbstractProcessor() {
                 messager.printMessage(Diagnostic.Kind.WARNING, "@CustomView should be use on class, skipping generation", it)
                 continue
             }
-            viewManagerGenerator.generateView(it as TypeElement)
-            if (useAndroidBinding(it)) {
-                bindingHolderGenerator.generateView(it)
+//            viewManagerGenerator.generateView(it as TypeElement)
+            if (useAndroidBinding(it as TypeElement)) {
+                bindingHolderGenerator.generateView(it, xmlCustomLayout(it).second)
                 bindingRecyclerViewAdapterGenerator.generateView(it)
             }
         }
@@ -72,14 +72,19 @@ class GenoAnnotationProcessor : AbstractProcessor() {
 
     private fun useAndroidBinding(element: TypeElement): Boolean {
         val className = element.asClassName()
-        val viewName = element.getAnnotation(CustomView::class.java).viewName
-        val xmlLayoutFile = File("compiler-test/src/main/res/layout/$viewName.xml")
-        val xmlDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlLayoutFile)
+        val (xmlLayoutFile, xmlDoc) = xmlCustomLayout(element)
         if (xmlDoc.documentElement.nodeName != "layout") {
             messager.printMessage(Diagnostic.Kind.WARNING, "$className is not using Android Data Binding ($xmlLayoutFile should start with 'layout' but starts with '${xmlDoc.documentElement.nodeName}'")
             return false
         }
         return true
+    }
+
+    private fun xmlCustomLayout(element: TypeElement): Pair<File, Document> {
+        val viewName = element.getAnnotation(CustomView::class.java).viewName
+        val xmlLayoutFile = File("compiler-test/src/main/res/layout/$viewName.xml")
+        val xmlDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlLayoutFile)
+        return Pair(xmlLayoutFile, xmlDoc)
     }
 }
 

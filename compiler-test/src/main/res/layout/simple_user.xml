@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="simpleGithubUser"
+            name="user"
             type="com.glureau.compiler.test.model.SimpleGithubUser" />
     </data>
 
@@ -24,7 +24,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:visibility="visible"
-            app:glideLoadUrl="@{simpleGithubUser.avatar_url}"
+            app:glideLoadUrl="@{user.avatar_url}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@color/colorAccent" />
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="@{simpleGithubUser.login}"
+            android:text="@{user.login}"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/geno_avatar_url"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:autoLink="web"
-            android:text="@{simpleGithubUser.html_url}"
+            android:text="@{user.html_url}"
             app:layout_constraintStart_toEndOf="@+id/geno_avatar_url"
             app:layout_constraintTop_toBottomOf="@+id/geno_login"
             tools:text="https://glureau.com" />

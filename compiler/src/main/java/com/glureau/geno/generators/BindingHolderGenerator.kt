@@ -1,10 +1,10 @@
 package com.glureau.geno.generators
 
 import com.glureau.geno.annotation.CustomView
-import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.AndroidClasses.RECYCLER_VIEW_HOLDER
 import com.glureau.geno.utils.AnnotationHelper
 import com.squareup.kotlinpoet.*
+import org.w3c.dom.Document
 import java.io.File
 import javax.annotation.processing.Messager
 import javax.lang.model.element.TypeElement
@@ -18,12 +18,12 @@ class BindingHolderGenerator(private val messager: Messager) {
 //    package com.glureau.geno.test
 //    class GithubUserBindingHolder(val binding: GithubUserBinding) : RecyclerView.ViewHolder(binding.root) {
 //        fun bind(githubUser: GithubUser) {
-//            binding.githubUser = githubUser
+//            binding.user /* name from XML if same class */ = githubUser
 //            binding.executePendingBindings()
 //        }
 //    }
 
-    fun generateView(element: TypeElement) {
+    fun generateView(element: TypeElement, xmlLayout: Document) {
         val className = element.asClassName()
 
         val simpleClassName = className.simpleName()
@@ -40,6 +40,16 @@ class BindingHolderGenerator(private val messager: Messager) {
         val bindingClassName = ClassName(projectPackage + ".databinding", bindingName)
         val bindingInstanceName = bindingClassName.simpleName().decapitalize()
 
+        var xmlBindingName = instanceName
+        val nodeList = xmlLayout.getElementsByTagName("variable")
+        for (i in 0 until nodeList.length) {
+            val type = nodeList.item(i).attributes.getNamedItem("type").textContent
+            if (type == className.canonicalName) { // Found a mapping with the same class
+                xmlBindingName = nodeList.item(i).attributes.getNamedItem("name").textContent
+                continue // Match with the first mapping ONLY (known limitation)
+            }
+        }
+
         val classBuilder = TypeSpec.classBuilder(holderClassName)
                 .primaryConstructor(FunSpec.constructorBuilder()
                         .addParameter(bindingInstanceName, bindingClassName)
@@ -53,7 +63,7 @@ class BindingHolderGenerator(private val messager: Messager) {
                         .build())
                 .addFunction(FunSpec.builder("bind")
                         .addParameter(instanceName, className)
-                        .addStatement("$bindingInstanceName.$instanceName = $instanceName")
+                        .addStatement("$bindingInstanceName.$xmlBindingName = $instanceName")
                         .addStatement("$bindingInstanceName.executePendingBindings()")
                         .build()
                 )
