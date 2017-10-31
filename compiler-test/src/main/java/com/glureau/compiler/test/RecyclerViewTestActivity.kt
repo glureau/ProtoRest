@@ -27,14 +27,10 @@ class RecyclerViewTestActivity : AppCompatActivity() {
         Observable.just(1)
                 .observeOn(Schedulers.io())
                 .map {
-                    Timber.wtf("Start with $it")
-                    Timber.wtf("Raw result ${api.get("orgs/square/members", Array<SimpleGithubUser>::class.java)}")
-                    api.get("orgs/square/members", Array<SimpleGithubUser>::class.java) }
+                    api.get("orgs/google/members?per_page=1000", Array<SimpleGithubUser>::class.java) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    Timber.wtf("Receive $it")
                     val users = (it.data as Array<SimpleGithubUser>).toMutableList()
-                    Timber.wtf("Users $users")
                     recyclerView.adapter = SimpleGithubUserBindingRecyclerViewAdapter(users)
                 }
 
