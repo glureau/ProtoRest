@@ -1,4 +1,4 @@
-package com.glureau.geno.generators
+package com.glureau.geno.generators.view
 
 import com.glureau.geno.annotation.CustomView
 import com.glureau.geno.utils.AndroidClasses.RECYCLER_VIEW_HOLDER
@@ -23,11 +23,11 @@ class BindingHolderGenerator(private val messager: Messager) {
 //        }
 //    }
 
-    fun generateView(element: TypeElement, xmlLayout: Document) {
+    fun generate(element: TypeElement, xmlLayout: Document, outputDir: String?) {
         val className = element.asClassName()
 
         val simpleClassName = className.simpleName()
-        val packageName = className.packageName()
+        val packageName = className.packageName() + ".view"
         val instanceName = simpleClassName.decapitalize()
         val holderClassName = simpleClassName + "BindingHolder"
 
@@ -73,7 +73,7 @@ class BindingHolderGenerator(private val messager: Messager) {
                 .addType(classBuilder.build())
                 .build()
 
-        val path = File("./compiler-test/build/generated/source/kapt/debug")
+        val path = File(outputDir)
         file.writeTo(path)
 
         messager.printMessage(Diagnostic.Kind.NOTE, "Generated $simpleClassName")

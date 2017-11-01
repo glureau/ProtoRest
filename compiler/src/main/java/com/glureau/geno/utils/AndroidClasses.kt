@@ -22,4 +22,9 @@ object AndroidClasses {
     val RECYCLER_VIEW = ClassName("android.support.v7.widget", "RecyclerView")
     val RECYCLER_VIEW_HOLDER = ClassName("android.support.v7.widget", "RecyclerView", "ViewHolder")
     fun RECYCLER_VIEW_ADAPTER(generic: String) = ClassName("android.support.v7.widget", "RecyclerView", "Adapter<$generic>")
+
+    // Room
+    val ROOM_COLUMN_INFO = ClassName("android.arch.persistence.room", "ColumnInfo")
+    val ROOM_ENTITY = ClassName("android.arch.persistence.room", "Entity")
+    val ROOM_PRIMARY_KEY = ClassName("android.arch.persistence.room", "PrimaryKey")
 }

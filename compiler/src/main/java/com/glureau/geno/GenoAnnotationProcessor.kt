@@ -1,8 +1,9 @@
 package com.glureau.geno
 
 import com.glureau.geno.annotation.*
-import com.glureau.geno.generators.BindingHolderGenerator
-import com.glureau.geno.generators.BindingRecyclerViewAdapterGenerator
+import com.glureau.geno.generators.data.EntityGenerator
+import com.glureau.geno.generators.view.BindingHolderGenerator
+import com.glureau.geno.generators.view.BindingRecyclerViewAdapterGenerator
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.asClassName
 import org.w3c.dom.Document
@@ -23,17 +24,19 @@ class GenoAnnotationProcessor : AbstractProcessor() {
 
     private lateinit var messager: Messager
     private lateinit var filer: Filer
-//    private lateinit var viewManagerGenerator: ViewManagerGenerator
+
     private lateinit var bindingHolderGenerator: BindingHolderGenerator
     private lateinit var bindingRecyclerViewAdapterGenerator: BindingRecyclerViewAdapterGenerator
+    private lateinit var entityGenerator: EntityGenerator
 
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
         messager = processingEnv.messager
         filer = processingEnv.filer
-//        viewManagerGenerator = ViewManagerGenerator(messager)
+
         bindingHolderGenerator = BindingHolderGenerator(messager)
         bindingRecyclerViewAdapterGenerator = BindingRecyclerViewAdapterGenerator(messager)
+        entityGenerator = EntityGenerator(messager)
     }
 
     companion object {
@@ -57,15 +60,17 @@ class GenoAnnotationProcessor : AbstractProcessor() {
 
     private fun generateViews(roundEnv: RoundEnvironment) {
         val elements = roundEnv.getElementsAnnotatedWith(CustomView::class.java)
+        val outputDir = processingEnv.options["kapt.kotlin.generated"]
         for (it in elements) {
             if (it.kind != ElementKind.CLASS) {
                 messager.printMessage(Diagnostic.Kind.WARNING, "@CustomView should be use on class, skipping generation", it)
                 continue
             }
-//            viewManagerGenerator.generateView(it as TypeElement)
+
             if (useAndroidBinding(it as TypeElement)) {
-                bindingHolderGenerator.generateView(it, xmlCustomLayout(it).second)
-                bindingRecyclerViewAdapterGenerator.generateView(it)
+                bindingHolderGenerator.generate(it, xmlCustomLayout(it).second, outputDir)
+                bindingRecyclerViewAdapterGenerator.generate(it, outputDir)
+                entityGenerator.generate(it, outputDir)
             }
         }
     }

@@ -57,4 +57,9 @@ dependencies {
     // UI
     kapt 'com.android.databinding:compiler:3.0.0'
 
+    // Persistence
+    implementation "android.arch.persistence.room:runtime:1.0.0-alpha9-1"
+    kapt "android.arch.persistence.room:compiler:1.0.0-alpha9-1"
+    implementation "android.arch.persistence.room:rxjava2:1.0.0-alpha9-1"
+
 }

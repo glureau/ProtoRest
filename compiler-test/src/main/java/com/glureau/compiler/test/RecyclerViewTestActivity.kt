@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.glureau.compiler.test.model.SimpleGithubUser
-import com.glureau.compiler.test.model.SimpleGithubUserBindingRecyclerViewAdapter
+import com.glureau.compiler.test.model.view.SimpleGithubUserBindingRecyclerViewAdapter
 import com.glureau.geno.lib.rest.RestApi
 import com.glureau.test.R
 import io.reactivex.Observable

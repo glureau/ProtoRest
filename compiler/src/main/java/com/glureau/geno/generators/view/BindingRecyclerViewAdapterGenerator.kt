@@ -1,8 +1,9 @@
-package com.glureau.geno.generators
+package com.glureau.geno.generators.view
 
 import com.glureau.geno.annotation.CustomView
 import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.AnnotationHelper
+import com.glureau.geno.utils.ImportInjection
 import com.squareup.kotlinpoet.*
 import java.io.File
 import javax.annotation.processing.Messager
@@ -30,11 +31,11 @@ class BindingRecyclerViewAdapterGenerator(private val messager: Messager) {
 //    }
 
 
-    fun generateView(element: TypeElement) {
+    fun generate(element: TypeElement, outputDir: String?) {
         val className = element.asClassName()
 
         val simpleClassName = className.simpleName()
-        val packageName = className.packageName()
+        val packageName = className.packageName() + ".view"
         val instanceName = simpleClassName.decapitalize()
         val holderClassName = simpleClassName + "BindingHolder"
         val adapterClassName = simpleClassName + "BindingRecyclerViewAdapter"
@@ -90,8 +91,10 @@ class BindingRecyclerViewAdapterGenerator(private val messager: Messager) {
                 .addType(classBuilder.build())
                 .build()
 
-        val path = File("./compiler-test/build/generated/source/kapt/debug")
+        val path = File(outputDir)
         file.writeTo(path)
+
+        ImportInjection.injectImport(outputDir + "/" + packageName.replace(".", "/") + "/" + adapterClassName + ".kt", className.canonicalName)
 
         messager.printMessage(Diagnostic.Kind.NOTE, "Generated $simpleClassName")
     }
