@@ -1,6 +1,7 @@
 package com.glureau.geno
 
 import com.glureau.geno.annotation.*
+import com.glureau.geno.generators.data.DaoGenerator
 import com.glureau.geno.generators.data.EntityGenerator
 import com.glureau.geno.generators.view.BindingHolderGenerator
 import com.glureau.geno.generators.view.BindingRecyclerViewAdapterGenerator
@@ -28,6 +29,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     private lateinit var bindingHolderGenerator: BindingHolderGenerator
     private lateinit var bindingRecyclerViewAdapterGenerator: BindingRecyclerViewAdapterGenerator
     private lateinit var entityGenerator: EntityGenerator
+    private lateinit var daoGenerator: DaoGenerator
 
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
@@ -37,6 +39,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
         bindingHolderGenerator = BindingHolderGenerator(messager)
         bindingRecyclerViewAdapterGenerator = BindingRecyclerViewAdapterGenerator(messager)
         entityGenerator = EntityGenerator(messager)
+        daoGenerator = DaoGenerator(messager)
     }
 
     companion object {
@@ -71,6 +74,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
                 bindingHolderGenerator.generate(it, xmlCustomLayout(it).second, outputDir)
                 bindingRecyclerViewAdapterGenerator.generate(it, outputDir)
                 entityGenerator.generate(it, outputDir)
+                daoGenerator.generate(it, outputDir)
             }
         }
     }

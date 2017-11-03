@@ -46,7 +46,8 @@ class EntityGenerator(private val messager: Messager) {
 
 
         val constructor = FunSpec.constructorBuilder()
-        constructor.addParameter(ParameterSpec.builder(INTERNAL_ID, Long::class).defaultValue("0").addAnnotation(AndroidClasses.ROOM_PRIMARY_KEY).build())
+        constructor.addParameter(ParameterSpec.builder(INTERNAL_ID, Long::class).defaultValue("0").addAnnotation(
+                AnnotationSpec.builder(AndroidClasses.ROOM_PRIMARY_KEY).addMember("autoGenerate", "true").build()).build())
         classBuilder.addProperty(PropertySpec.builder(INTERNAL_ID, Long::class).initializer(INTERNAL_ID).addAnnotation(AndroidClasses.ROOM_PRIMARY_KEY).build())
         addParameters(element, constructor, classBuilder)
 
@@ -67,7 +68,6 @@ class EntityGenerator(private val messager: Messager) {
         val fields = element.enclosedElements.filter { it.kind == ElementKind.FIELD /*&& it.modifiers.contains(Modifier.PUBLIC)*/ }.map { it as VariableElement }
 
         fields.forEach { field ->
-            //            messager.printMessage(Diagnostic.Kind.WARNING, "Field ${field.simpleName} asTypeName ${field.asType().asTypeName()} modifiers ${field.modifiers} annotations ${field.annotationMirrors}")
             val typeName = KotlinNullable.typeName(field)
             messager.printMessage(Diagnostic.Kind.WARNING, "Field ${field.simpleName} =>  $typeName => ${JavaToKotlinPrimitives.transformIfPrimitive(typeName)}")
 

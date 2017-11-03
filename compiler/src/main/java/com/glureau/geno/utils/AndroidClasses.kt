@@ -27,4 +27,10 @@ object AndroidClasses {
     val ROOM_COLUMN_INFO = ClassName("android.arch.persistence.room", "ColumnInfo")
     val ROOM_ENTITY = ClassName("android.arch.persistence.room", "Entity")
     val ROOM_PRIMARY_KEY = ClassName("android.arch.persistence.room", "PrimaryKey")
+    val ROOM_DAO = ClassName("android.arch.persistence.room", "Dao")
+    val ROOM_INSERT = ClassName("android.arch.persistence.room", "Insert")
+    val ROOM_ON_CONFLICT_STRATEGY = ClassName("android.arch.persistence.room", "OnConflictStrategy")
+    val ROOM_ON_CONFLICT_STRATEGY_REPLACE = ClassName("android.arch.persistence.room", "OnConflictStrategy", "REPLACE")
+    val ROOM_QUERY = ClassName("android.arch.persistence.room", "Query")
+    val ROOM_DELETE = ClassName("android.arch.persistence.room", "Delete")
 }
