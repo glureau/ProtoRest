@@ -3,6 +3,7 @@ package com.glureau.geno.generators.data
 import com.glureau.geno.GeneratedClassesInfo
 import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.KotlinClasses.ANNOTATION_VOLATILE
+import com.glureau.geno.utils.LibClasses.TYPE_CONVERTERS
 import com.squareup.kotlinpoet.*
 import java.io.File
 import javax.annotation.processing.Messager
@@ -15,6 +16,7 @@ class DatabaseGenerator(private val messager: Messager) {
 
 
 //    @Database(entities = arrayOf(UsersEntity::class, ...), version = 1, exportSchema = false)
+//    @TypeConverters({Converters.class})
 //    abstract class GenoDatabase : RoomDatabase() {
 //
 //        abstract fun userDao(): UserDao
@@ -45,6 +47,9 @@ class DatabaseGenerator(private val messager: Messager) {
                         .addMember("version", "1") //TODO : Should be an annotation param
                         .addMember("exportSchema", "false")
                         .addMember("entities", "arrayOf(" + entities.joinToString { "%T::class" } + ")", *entities.toTypedArray())
+                        .build())
+                .addAnnotation(AnnotationSpec.builder(AndroidClasses.ROOM_TYPE_CONVERTERS)
+                        .addMember("value", "%T::class", TYPE_CONVERTERS)
                         .build())
                 .addModifiers(KModifier.ABSTRACT)
 

@@ -1,1 +1,1 @@
-include /*':geno-core', ':samples:github', ':samples:dogs',*/ ':annotation', ':compiler', ':compiler-test', ':lib'
+include /*':geno-core', ':samples:github', ':samples:dogs',*/ ':annotation', ':lib', ':compiler', ':compiler-test'

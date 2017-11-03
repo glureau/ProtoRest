@@ -38,4 +38,6 @@ object AndroidClasses {
     val ROOM_ON_CONFLICT_STRATEGY_REPLACE = ClassName("android.arch.persistence.room", "OnConflictStrategy", "REPLACE")
     val ROOM_QUERY = ClassName("android.arch.persistence.room", "Query")
     val ROOM_DELETE = ClassName("android.arch.persistence.room", "Delete")
+    val ROOM_TYPE_CONVERTERS = ClassName("android.arch.persistence.room", "TypeConverters")
+
 }
