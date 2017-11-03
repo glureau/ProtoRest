@@ -2,16 +2,17 @@ package com.glureau.geno
 
 import com.glureau.geno.annotation.*
 import com.glureau.geno.generators.data.DaoGenerator
+import com.glureau.geno.generators.data.DatabaseGenerator
 import com.glureau.geno.generators.data.EntityGenerator
-import com.glureau.geno.generators.view.BindingHolderGenerator
-import com.glureau.geno.generators.view.BindingRecyclerViewAdapterGenerator
+import com.glureau.geno.generators.view.ViewHolderGenerator
+import com.glureau.geno.generators.view.RecyclerViewAdapterGenerator
 import com.google.auto.service.AutoService
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asClassName
 import org.w3c.dom.Document
 import java.io.File
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 import javax.xml.parsers.DocumentBuilderFactory
@@ -26,20 +27,24 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     private lateinit var messager: Messager
     private lateinit var filer: Filer
 
-    private lateinit var bindingHolderGenerator: BindingHolderGenerator
-    private lateinit var bindingRecyclerViewAdapterGenerator: BindingRecyclerViewAdapterGenerator
+    private lateinit var viewHolderGenerator: ViewHolderGenerator
+    private lateinit var recyclerViewAdapterGenerator: RecyclerViewAdapterGenerator
     private lateinit var entityGenerator: EntityGenerator
     private lateinit var daoGenerator: DaoGenerator
+    private lateinit var databaseGenerator: DatabaseGenerator
+
+    private val generatedClassesInfos = mutableMapOf<ClassName, GeneratedClassesInfo>()
 
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
         messager = processingEnv.messager
         filer = processingEnv.filer
 
-        bindingHolderGenerator = BindingHolderGenerator(messager)
-        bindingRecyclerViewAdapterGenerator = BindingRecyclerViewAdapterGenerator(messager)
+        viewHolderGenerator = ViewHolderGenerator(messager)
+        recyclerViewAdapterGenerator = RecyclerViewAdapterGenerator(messager)
         entityGenerator = EntityGenerator(messager)
         daoGenerator = DaoGenerator(messager)
+        databaseGenerator = DatabaseGenerator(messager)
     }
 
     companion object {
@@ -57,26 +62,26 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     }
 
     override fun process(annotations: Set<TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        generateViews(roundEnv)
+        generateClasses(roundEnv)
         return false
     }
 
-    private fun generateViews(roundEnv: RoundEnvironment) {
-        val elements = roundEnv.getElementsAnnotatedWith(CustomView::class.java)
+    private fun generateClasses(roundEnv: RoundEnvironment) {
+        val elements = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as MutableSet<TypeElement>? ?: return // Null : nothing to process
         val outputDir = processingEnv.options["kapt.kotlin.generated"]
-        for (it in elements) {
-            if (it.kind != ElementKind.CLASS) {
-                messager.printMessage(Diagnostic.Kind.WARNING, "@CustomView should be use on class, skipping generation", it)
-                continue
-            }
 
-            if (useAndroidBinding(it as TypeElement)) {
-                bindingHolderGenerator.generate(it, xmlCustomLayout(it).second, outputDir)
-                bindingRecyclerViewAdapterGenerator.generate(it, outputDir)
-                entityGenerator.generate(it, outputDir)
-                daoGenerator.generate(it, outputDir)
+        for (it in elements) {
+            val generatedClassesInfo = GeneratedClassesInfo()
+            generatedClassesInfos.put(it.asClassName(), generatedClassesInfo)
+            if (useAndroidBinding(it)) {
+                viewHolderGenerator.generate(it, xmlCustomLayout(it).second, outputDir, generatedClassesInfo)
+                recyclerViewAdapterGenerator.generate(it, outputDir, generatedClassesInfo)
             }
+            entityGenerator.generate(it, outputDir, generatedClassesInfo)
+            daoGenerator.generate(it, outputDir, generatedClassesInfo)
         }
+
+        databaseGenerator.generate(generatedClassesInfos, outputDir)
     }
 
     private fun useAndroidBinding(element: TypeElement): Boolean {

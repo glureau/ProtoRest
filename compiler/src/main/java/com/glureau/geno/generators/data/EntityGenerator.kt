@@ -1,5 +1,7 @@
 package com.glureau.geno.generators.data
 
+import com.glureau.geno.GeneratedClassInfo
+import com.glureau.geno.GeneratedClassesInfo
 import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.JavaToKotlinPrimitives
 import com.glureau.geno.utils.KotlinNullable
@@ -30,7 +32,7 @@ class EntityGenerator(private val messager: Messager) {
 //    )
 
 
-    fun generate(element: TypeElement, outputDir: String?) {
+    fun generate(element: TypeElement, outputDir: String?, generatedClassesInfo: GeneratedClassesInfo) {
         val className = element.asClassName()
 
         val simpleClassName = className.simpleName()
@@ -61,7 +63,8 @@ class EntityGenerator(private val messager: Messager) {
         val path = File(outputDir)
         file.writeTo(path)
 
-        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $simpleClassName")
+        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $entityClassName")
+        generatedClassesInfo.entity= GeneratedClassInfo(ClassName(packageName, entityClassName))
     }
 
     private fun addParameters(element: TypeElement, constructor: FunSpec.Builder, classBuilder: TypeSpec.Builder) {

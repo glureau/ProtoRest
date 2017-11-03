@@ -1,5 +1,7 @@
 package com.glureau.geno.generators.view
 
+import com.glureau.geno.GeneratedClassInfo
+import com.glureau.geno.GeneratedClassesInfo
 import com.glureau.geno.annotation.CustomView
 import com.glureau.geno.utils.AndroidClasses.RECYCLER_VIEW_HOLDER
 import com.glureau.geno.utils.AnnotationHelper
@@ -13,7 +15,7 @@ import javax.tools.Diagnostic
 /**
  * Created by Greg on 22/10/2017.
  */
-class BindingHolderGenerator(private val messager: Messager) {
+class ViewHolderGenerator(private val messager: Messager) {
 
 //    package com.glureau.geno.test
 //    class GithubUserBindingHolder(val binding: GithubUserBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -23,7 +25,7 @@ class BindingHolderGenerator(private val messager: Messager) {
 //        }
 //    }
 
-    fun generate(element: TypeElement, xmlLayout: Document, outputDir: String?) {
+    fun generate(element: TypeElement, xmlLayout: Document, outputDir: String?, generatedClassesInfo: GeneratedClassesInfo) {
         val className = element.asClassName()
 
         val simpleClassName = className.simpleName()
@@ -76,6 +78,7 @@ class BindingHolderGenerator(private val messager: Messager) {
         val path = File(outputDir)
         file.writeTo(path)
 
-        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $simpleClassName")
+        generatedClassesInfo.viewHolder = GeneratedClassInfo(ClassName(packageName, holderClassName))
+        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $holderClassName")
     }
 }

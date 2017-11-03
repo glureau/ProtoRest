@@ -1,5 +1,7 @@
 package com.glureau.geno.generators.view
 
+import com.glureau.geno.GeneratedClassInfo
+import com.glureau.geno.GeneratedClassesInfo
 import com.glureau.geno.annotation.CustomView
 import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.AnnotationHelper
@@ -13,7 +15,7 @@ import javax.tools.Diagnostic
 /**
  * Created by Greg on 22/10/2017.
  */
-class BindingRecyclerViewAdapterGenerator(private val messager: Messager) {
+class RecyclerViewAdapterGenerator(private val messager: Messager) {
 
 //    package com.glureau.geno.test
 //    class GithubUserBindingRecyclerViewAdapter(val githubUsers: MutableList<GithubUser> = mutableListOf()) : RecyclerView.Adapter<TrackRecyclerViewAdapter.TrackViewHolder>() {
@@ -31,7 +33,7 @@ class BindingRecyclerViewAdapterGenerator(private val messager: Messager) {
 //    }
 
 
-    fun generate(element: TypeElement, outputDir: String?) {
+    fun generate(element: TypeElement, outputDir: String?, generatedClassesInfo: GeneratedClassesInfo) {
         val className = element.asClassName()
 
         val simpleClassName = className.simpleName()
@@ -96,6 +98,7 @@ class BindingRecyclerViewAdapterGenerator(private val messager: Messager) {
 
         ImportInjection.injectImport(outputDir + "/" + packageName.replace(".", "/") + "/" + adapterClassName + ".kt", className.canonicalName)
 
-        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $simpleClassName")
+        generatedClassesInfo.recyclerView = GeneratedClassInfo(ClassName(packageName, adapterClassName))
+        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $adapterClassName")
     }
 }

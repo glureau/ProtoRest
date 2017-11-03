@@ -7,4 +7,5 @@ import com.squareup.kotlinpoet.ClassName
  */
 object KotlinClasses {
     val MUTABLE_LIST = ClassName("kotlin.collections", "MutableList")
+    val ANNOTATION_VOLATILE = ClassName("kotlin.jvm", "Volatile")
 }

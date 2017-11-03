@@ -6,6 +6,8 @@ import com.squareup.kotlinpoet.ClassName
  * Created by Greg on 22/10/2017.
  */
 object AndroidClasses {
+    val CONTEXT = ClassName("android.content", "Context")
+
     // View
     val VIEW = ClassName("android.view", "View")
     val VIEW_GROUP = ClassName("android.view", "ViewGroup")
@@ -24,6 +26,9 @@ object AndroidClasses {
     fun RECYCLER_VIEW_ADAPTER(generic: String) = ClassName("android.support.v7.widget", "RecyclerView", "Adapter<$generic>")
 
     // Room
+    val DATABASE = ClassName("android.arch.persistence.room", "Database")
+    val ROOM = ClassName("android.arch.persistence.room", "Room")
+    val ROOM_DATABASE = ClassName("android.arch.persistence.room", "RoomDatabase")
     val ROOM_COLUMN_INFO = ClassName("android.arch.persistence.room", "ColumnInfo")
     val ROOM_ENTITY = ClassName("android.arch.persistence.room", "Entity")
     val ROOM_PRIMARY_KEY = ClassName("android.arch.persistence.room", "PrimaryKey")

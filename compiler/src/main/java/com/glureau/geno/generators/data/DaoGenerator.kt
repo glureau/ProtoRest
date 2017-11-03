@@ -1,12 +1,12 @@
 package com.glureau.geno.generators.data
 
-import com.glureau.geno.utils.AndroidClasses
+import com.glureau.geno.GeneratedClassInfo
+import com.glureau.geno.GeneratedClassesInfo
 import com.glureau.geno.utils.AndroidClasses.ROOM_DAO
 import com.glureau.geno.utils.AndroidClasses.ROOM_DELETE
 import com.glureau.geno.utils.AndroidClasses.ROOM_INSERT
 import com.glureau.geno.utils.AndroidClasses.ROOM_ON_CONFLICT_STRATEGY_REPLACE
 import com.glureau.geno.utils.AndroidClasses.ROOM_QUERY
-import com.glureau.geno.utils.ReactivexClasses
 import com.glureau.geno.utils.ReactivexClasses.MAYBE
 import com.squareup.kotlinpoet.*
 import java.io.File
@@ -34,7 +34,7 @@ class DaoGenerator(private val messager: Messager) {
 //    }
 
 
-    fun generate(element: TypeElement, outputDir: String?) {
+    fun generate(element: TypeElement, outputDir: String?, generatedClassesInfo: GeneratedClassesInfo) {
         val className = element.asClassName()
 
         val simpleClassName = className.simpleName()
@@ -84,7 +84,8 @@ class DaoGenerator(private val messager: Messager) {
         val path = File(outputDir)
         file.writeTo(path)
 
-        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $simpleClassName")
+        generatedClassesInfo.dao = GeneratedClassInfo(ClassName(packageName, daoName))
+        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $daoName")
     }
 
 }
