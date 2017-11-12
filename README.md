@@ -1,2 +1,2 @@
-# Geno ![Build status](https://travis-ci.org/glureau/Geno.svg?branch=master)
+# Geno ![Build status](https://travis-ci.org/glureau/geno.svg?branch=master)
 Work in progress
