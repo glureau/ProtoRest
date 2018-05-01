@@ -2,11 +2,13 @@ package com.glureau.geno.generators.data
 
 import com.glureau.geno.GeneratedClassInfo
 import com.glureau.geno.GeneratedClassesInfo
+import com.glureau.geno.annotation.db.InternalEntity
 import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.JavaToKotlinPrimitives
 import com.glureau.geno.utils.KotlinNullable
 import com.squareup.kotlinpoet.*
 import java.io.File
+import java.util.*
 import javax.annotation.processing.Messager
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
@@ -20,6 +22,7 @@ class EntityGenerator(private val messager: Messager) {
 
     companion object {
         val INTERNAL_ID = "_internal_id"
+        val INTERNAL_UPDATE_DATE = "_internal_update_date"
     }
 
 
@@ -39,18 +42,39 @@ class EntityGenerator(private val messager: Messager) {
         val packageName = className.packageName() + ".data"
         val entityClassName = simpleClassName + "Entity"
 
-
         val classBuilder = TypeSpec.classBuilder(entityClassName)
                 .addModifiers(KModifier.DATA)
+                .addSuperinterface(InternalEntity::class)
                 .addAnnotation(AnnotationSpec.builder(AndroidClasses.ROOM_ENTITY)
                         .addMember("tableName", "\"$simpleClassName\"")
                         .build())
 
 
         val constructor = FunSpec.constructorBuilder()
-        constructor.addParameter(ParameterSpec.builder(INTERNAL_ID, Long::class).defaultValue("0").addAnnotation(
-                AnnotationSpec.builder(AndroidClasses.ROOM_PRIMARY_KEY).addMember("autoGenerate", "true").build()).build())
-        classBuilder.addProperty(PropertySpec.builder(INTERNAL_ID, Long::class).initializer(INTERNAL_ID).addAnnotation(AndroidClasses.ROOM_PRIMARY_KEY).build())
+        constructor.addParameter(ParameterSpec
+                .builder(INTERNAL_ID, Long::class)
+                .defaultValue("0")
+                .addModifiers(KModifier.OVERRIDE)
+                .addAnnotation(AnnotationSpec.builder(AndroidClasses.ROOM_PRIMARY_KEY).addMember("autoGenerate", "true").build())
+                .build())
+        classBuilder.addProperty(PropertySpec
+                .builder(INTERNAL_ID, Long::class)
+                .initializer(INTERNAL_ID)
+                .addModifiers(KModifier.OVERRIDE)
+                .addAnnotation(AndroidClasses.ROOM_PRIMARY_KEY)
+                .build())
+
+        constructor.addParameter(ParameterSpec
+                .builder(INTERNAL_UPDATE_DATE, Date::class)
+                .defaultValue("java.util.Calendar.getInstance().time")
+                .addModifiers(KModifier.OVERRIDE)
+                .build())
+        classBuilder.addProperty(PropertySpec
+                .builder(INTERNAL_UPDATE_DATE, Date::class)
+                .addModifiers(KModifier.OVERRIDE)
+                .initializer(INTERNAL_UPDATE_DATE)
+                .build())
+
         addParameters(element, constructor, classBuilder)
 
         classBuilder.primaryConstructor(constructor.build())

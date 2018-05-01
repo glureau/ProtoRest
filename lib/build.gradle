@@ -72,4 +72,5 @@ dependencies {
     implementation 'com.trello.rxlifecycle2:rxlifecycle-kotlin:2.2.0'
     implementation 'com.trello.rxlifecycle2:rxlifecycle-android-lifecycle-kotlin:2.2.0'
 
+    compile project(path: ':annotation')
 }
