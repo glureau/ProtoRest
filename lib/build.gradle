@@ -55,8 +55,21 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.5.1'
 
     // Persistence
-    implementation "android.arch.persistence.room:runtime:1.0.0"
-    kapt "android.arch.persistence.room:compiler:1.0.0"
-    implementation "android.arch.persistence.room:rxjava2:1.0.0"
+    implementation "android.arch.persistence.room:runtime:1.1.0-beta3"
+    kapt "android.arch.persistence.room:compiler:1.1.0-beta3"
+    implementation "android.arch.persistence.room:rxjava2:1.1.0-beta3"
+
+    // Architecture components
+    implementation "android.arch.lifecycle:runtime:1.1.1"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    kapt "android.arch.lifecycle:compiler:1.1.1"
+
+    // Reactive Programming
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle:2.2.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-kotlin:2.2.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-android-lifecycle-kotlin:2.2.0'
 
 }

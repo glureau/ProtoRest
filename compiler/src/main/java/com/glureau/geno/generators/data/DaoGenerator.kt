@@ -7,6 +7,8 @@ import com.glureau.geno.utils.AndroidClasses.ROOM_DELETE
 import com.glureau.geno.utils.AndroidClasses.ROOM_INSERT
 import com.glureau.geno.utils.AndroidClasses.ROOM_ON_CONFLICT_STRATEGY_REPLACE
 import com.glureau.geno.utils.AndroidClasses.ROOM_QUERY
+import com.glureau.geno.utils.KotlinClasses
+import com.glureau.geno.utils.KotlinClasses.LIST
 import com.glureau.geno.utils.ReactivexClasses.MAYBE
 import com.squareup.kotlinpoet.*
 import java.io.File
@@ -54,6 +56,19 @@ class DaoGenerator(private val messager: Messager) {
                         .returns(MAYBE(entityClassName))
                         .addAnnotation(AnnotationSpec.builder(ROOM_QUERY)
                                 .addMember("value", "\"SELECT * FROM $simpleClassName WHERE id = :id\"")
+                                .build())
+                        .build()
+        )
+
+//        @Query("SELECT * FROM SimpleGithubUser")
+//        fun getSimpleGithubUsers(): Maybe<List<SimpleGithubUserEntity>>
+
+        classBuilder.addFunction(
+                FunSpec.builder("get${simpleClassName}s")
+                        .addModifiers(KModifier.ABSTRACT)
+                        .returns(MAYBE(LIST(entityClassName)))
+                        .addAnnotation(AnnotationSpec.builder(ROOM_QUERY)
+                                .addMember("value", "\"SELECT * FROM $simpleClassName\"")
                                 .build())
                         .build()
         )

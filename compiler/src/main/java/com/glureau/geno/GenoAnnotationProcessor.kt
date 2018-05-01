@@ -72,9 +72,9 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     }
 
     private fun generateClasses(roundEnv: RoundEnvironment) {
-        val customViews = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as MutableSet<TypeElement>? ?: return // Null : nothing to process
-        val viewModels = roundEnv.getElementsAnnotatedWith(ViewModel::class.java) as MutableSet<TypeElement>? ?: return // Null : nothing to process
-        val restApis = roundEnv.getElementsAnnotatedWith(RestApi::class.java) as MutableSet<TypeElement>? ?: return // Null : nothing to process
+        val customViews = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as Set<TypeElement>? ?: return // Null : nothing to process
+        val viewModels = roundEnv.getElementsAnnotatedWith(ViewModel::class.java) as Set<TypeElement>? ?: return // Null : nothing to process
+        val restApis = roundEnv.getElementsAnnotatedWith(RestApi::class.java) as Set<TypeElement>? ?: return // Null : nothing to process
         val outputDir = processingEnv.options["kapt.kotlin.generated"]
 
         for (it in customViews) {

@@ -1,17 +1,24 @@
 package com.glureau.compiler.test
 
+import android.arch.lifecycle.Observer
+import android.arch.persistence.room.Room
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.glureau.compiler.test.api.GithubApiService
 import com.glureau.compiler.test.model.view.SimpleGithubUserBindingRecyclerViewAdapter
+import com.glureau.compiler.test.todo.GithubUserRepository
+import com.glureau.geno.db.GenoDatabase
+import com.glureau.geno.lib.repository.Resource
 import com.glureau.test.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
+
 
 class RecyclerViewTestActivity : AppCompatActivity() {
 
@@ -29,12 +36,22 @@ class RecyclerViewTestActivity : AppCompatActivity() {
                 .build()
         val api = retrofit.create<GithubApiService>(GithubApiService::class.java)
 
-        api.getMembers("google")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    val users = it.toMutableList()
-                    recyclerView.adapter = SimpleGithubUserBindingRecyclerViewAdapter(users)
-                }
+        val db = Room.databaseBuilder(applicationContext, GenoDatabase::class.java, "geno").build()
+
+        val repository = GithubUserRepository(api, db.simpleGithubUserDao())
+        repository.getMembers("google")
+                .observe(this, Observer {
+                    if (it?.status == Resource.Companion.Status.LOADING
+                        || it?.status == Resource.Companion.Status.SUCCESS) {
+                        val users = it.data?.toMutableList() ?: mutableListOf()
+                        recyclerView.adapter = SimpleGithubUserBindingRecyclerViewAdapter(users)
+                    } else {
+                        Timber.e("Issue happened: ${it?.message}")
+                        val t = it?.throwable
+                        if (t != null) {
+                            Timber.e(t)
+                        }
+                    }
+                })
     }
 }

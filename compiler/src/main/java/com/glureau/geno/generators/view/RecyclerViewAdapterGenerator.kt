@@ -48,7 +48,7 @@ class RecyclerViewAdapterGenerator(private val messager: Messager) {
         val projectPackage = R.toString().substring(0, R.toString().length - 2)
         val bindingName = viewName.split("_").joinToString("") { it.capitalize() } + "Binding"
 
-        val bindingClassName = ClassName(projectPackage + ".databinding", bindingName)
+        val bindingClassName = ClassName("$projectPackage.databinding", bindingName)
 
         val dataCollection = instanceName + "s"
         val dataClass = ClassName.bestGuess("MutableList<$simpleClassName>")

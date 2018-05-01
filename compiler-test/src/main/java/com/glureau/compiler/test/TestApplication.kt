@@ -1,6 +1,7 @@
 package com.glureau.compiler.test
 
 import android.app.Application
+import com.facebook.stetho.Stetho
 import com.glureau.test.BuildConfig
 import timber.log.Timber
 
@@ -11,6 +12,7 @@ class TestApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this)
             Timber.plant(Timber.DebugTree())
         }
     }
