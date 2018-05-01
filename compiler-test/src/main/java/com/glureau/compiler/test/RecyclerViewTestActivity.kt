@@ -4,17 +4,16 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import com.glureau.compiler.test.model.SimpleGithubUser
+import com.glureau.compiler.test.api.GithubApiService
 import com.glureau.compiler.test.model.view.SimpleGithubUserBindingRecyclerViewAdapter
-import com.glureau.geno.lib.rest.RestApi
 import com.glureau.test.R
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
 class RecyclerViewTestActivity : AppCompatActivity() {
-
-    private val api = RestApi("https://api.github.com/")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,16 +22,19 @@ class RecyclerViewTestActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         setContentView(recyclerView)
 
-        Observable.just(1)
-                .observeOn(Schedulers.io())
-                .map {
-                    api.get("orgs/google/members?per_page=1000", Array<SimpleGithubUser>::class.java)
-                }
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://api.github.com/")
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        val api = retrofit.create<GithubApiService>(GithubApiService::class.java)
+
+        api.getMembers("google")
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    val users = (it.data as Array<SimpleGithubUser>).toMutableList()
+                    val users = it.toMutableList()
                     recyclerView.adapter = SimpleGithubUserBindingRecyclerViewAdapter(users)
                 }
-
     }
 }

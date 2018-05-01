@@ -1,4 +1,4 @@
-package com.glureau.geno.annotation
+package com.glureau.geno.annotation.view
 
 import kotlin.reflect.KClass
 

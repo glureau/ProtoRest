@@ -2,7 +2,7 @@ package com.glureau.geno.generators.view
 
 import com.glureau.geno.GeneratedClassInfo
 import com.glureau.geno.GeneratedClassesInfo
-import com.glureau.geno.annotation.CustomView
+import com.glureau.geno.annotation.view.CustomView
 import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.AnnotationHelper
 import com.glureau.geno.utils.ImportInjection

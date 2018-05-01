@@ -1,7 +1,7 @@
 package com.glureau.geno.generators
 
 
-import com.glureau.geno.annotation.CustomView
+import com.glureau.geno.annotation.view.CustomView
 import com.glureau.geno.annotation.Image
 import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.AnnotationHelper.getAnnotationClassValue

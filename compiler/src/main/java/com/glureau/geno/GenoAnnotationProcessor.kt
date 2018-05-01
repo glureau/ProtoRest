@@ -1,6 +1,9 @@
 package com.glureau.geno
 
 import com.glureau.geno.annotation.*
+import com.glureau.geno.annotation.network.RestApi
+import com.glureau.geno.annotation.storage.ViewModel
+import com.glureau.geno.annotation.view.CustomView
 import com.glureau.geno.generators.data.DaoGenerator
 import com.glureau.geno.generators.data.DatabaseGenerator
 import com.glureau.geno.generators.data.EntityGenerator
@@ -13,6 +16,7 @@ import org.w3c.dom.Document
 import java.io.File
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
+import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 import javax.xml.parsers.DocumentBuilderFactory
@@ -50,6 +54,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     companion object {
         private val SUPPORTED_ANNOTATIONS = arrayOf(
                 CustomView::class.java,
+                RestApi::class.java,
                 Endpoint::class.java,
                 EndpointParam::class.java,
                 Image::class.java,
@@ -67,21 +72,36 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     }
 
     private fun generateClasses(roundEnv: RoundEnvironment) {
-        val elements = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as MutableSet<TypeElement>? ?: return // Null : nothing to process
+        val customViews = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as MutableSet<TypeElement>? ?: return // Null : nothing to process
+        val viewModels = roundEnv.getElementsAnnotatedWith(ViewModel::class.java) as MutableSet<TypeElement>? ?: return // Null : nothing to process
+        val restApis = roundEnv.getElementsAnnotatedWith(RestApi::class.java) as MutableSet<TypeElement>? ?: return // Null : nothing to process
         val outputDir = processingEnv.options["kapt.kotlin.generated"]
 
-        for (it in elements) {
-            val generatedClassesInfo = GeneratedClassesInfo()
-            generatedClassesInfos.put(it.asClassName(), generatedClassesInfo)
+        for (it in customViews) {
             if (useAndroidBinding(it)) {
-                viewHolderGenerator.generate(it, xmlCustomLayout(it).second, outputDir, generatedClassesInfo)
-                recyclerViewAdapterGenerator.generate(it, outputDir, generatedClassesInfo)
+                val info = info(it)
+                viewHolderGenerator.generate(it, xmlCustomLayout(it).second, outputDir, info)
+                recyclerViewAdapterGenerator.generate(it, outputDir, info)
             }
-            entityGenerator.generate(it, outputDir, generatedClassesInfo)
-            daoGenerator.generate(it, outputDir, generatedClassesInfo)
+        }
+
+        for (it in viewModels) {
+            val info = info(it)
+            entityGenerator.generate(it, outputDir, info)
+            daoGenerator.generate(it, outputDir, info)
+
         }
 
         databaseGenerator.generate(generatedClassesInfos, outputDir)
+    }
+
+    private fun info(elem: TypeElement): GeneratedClassesInfo {
+        var info = generatedClassesInfos[elem.asClassName()]
+        if (info == null) {
+            info = GeneratedClassesInfo()
+            generatedClassesInfos[elem.asClassName()] = info
+        }
+        return info
     }
 
     private fun useAndroidBinding(element: TypeElement): Boolean {

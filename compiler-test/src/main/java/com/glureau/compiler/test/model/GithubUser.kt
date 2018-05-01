@@ -1,15 +1,18 @@
 package com.glureau.compiler.test.model
 
-import com.glureau.geno.annotation.CustomView
+import com.glureau.geno.annotation.view.CustomView
 import com.glureau.geno.annotation.Image
+import com.glureau.geno.annotation.storage.ViewModel
 import java.util.Date
 
 // Minimal view, used for lists
 @CustomView(com.glureau.test.R::class, "simple_user")
+@ViewModel
 open class SimpleGithubUser (open val id: Long, open val login: String, @Image open val avatar_url: String?, open val html_url: String?)
 
 // Complete view
 @CustomView(com.glureau.test.R::class, "user")
+@ViewModel
 data class GithubUser(
         override val id: Long, override val login: String, override val avatar_url: String?, override val html_url: String?,
         val name: String?,
