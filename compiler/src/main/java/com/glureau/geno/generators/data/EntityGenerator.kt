@@ -52,15 +52,13 @@ class EntityGenerator(private val messager: Messager) {
 
         val constructor = FunSpec.constructorBuilder()
         constructor.addParameter(ParameterSpec
-                .builder(INTERNAL_ID, Long::class)
-                .defaultValue("0")
-                .addModifiers(KModifier.OVERRIDE)
+                .builder(INTERNAL_ID, Long::class.asTypeName().asNullable(), KModifier.OVERRIDE)
+                .defaultValue("null")
                 .addAnnotation(AnnotationSpec.builder(AndroidClasses.ROOM_PRIMARY_KEY).addMember("autoGenerate", "true").build())
                 .build())
         classBuilder.addProperty(PropertySpec
-                .builder(INTERNAL_ID, Long::class)
+                .builder(INTERNAL_ID, Long::class.asTypeName().asNullable(), KModifier.OVERRIDE)
                 .initializer(INTERNAL_ID)
-                .addModifiers(KModifier.OVERRIDE)
                 .addAnnotation(AndroidClasses.ROOM_PRIMARY_KEY)
                 .build())
 

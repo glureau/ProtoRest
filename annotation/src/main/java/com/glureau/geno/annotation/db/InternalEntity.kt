@@ -7,6 +7,6 @@ import java.util.*
  */
 
 interface InternalEntity {
-    val _internal_id: Long
+    val _internal_id: Long?
     val _internal_update_date: Date
 }

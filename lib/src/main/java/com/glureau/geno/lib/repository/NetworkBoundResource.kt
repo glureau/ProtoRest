@@ -8,6 +8,7 @@ import com.glureau.geno.lib.rx.DisposableManager
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import java.util.*
 
 
@@ -16,9 +17,9 @@ import java.util.*
  * You can read more about it in the [Architecture Guide](https://developer.android.com/arch).
  * @param <ResultType>
  */
-abstract class NetworkBoundResource<ResultType> @MainThread protected constructor() : DisposableManager() {
+abstract class NetworkBoundResource<Domain, Entity, Dto> @MainThread protected constructor() : DisposableManager() {
 
-    private val result = MutableLiveData<Resource<ResultType>>()
+    private val result = MutableLiveData<Resource<Domain>>()
 
     init {
         // Android developer guide could suggest sending an immediate loading status with null data...
@@ -34,17 +35,28 @@ abstract class NetworkBoundResource<ResultType> @MainThread protected constructo
 
                 // Update UI with database content
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess { data -> updateLiveData(Resource.loading(data)) }
+                .map { entity ->
+                    Timber.e("Entity $entity")
+                    val domain = entityToDomain(entity)
+                    Timber.e("Domain $domain")
+                    val shouldFetch = shouldFetch(entity)
+                    Timber.e("shouldFetch $shouldFetch")
+                    if (shouldFetch) {
+                        updateLiveData(Resource.loading(domain))
+                    } else {
+                        updateLiveData(Resource.success(domain))
+                    }
+                    shouldFetch
+                }
 
                 // Check if we need to fetch data from network
                 .observeOn(Schedulers.io())
-                .map { data -> shouldFetch(data) to data }
+                .map { shouldFetch -> if (shouldFetch) fetchFromNetwork() }
                 .doOnComplete { fetchFromNetwork() } // No data from DB
-                .doOnSuccess { (shouldFetch, _) -> if (shouldFetch) fetchFromNetwork() }
 
                 // Update UI if no network fetch required or impossible to acquire data
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess { (shouldFetch, data) -> if (!shouldFetch) updateLiveData(Resource.success(data)) }
+                .observeOn(AndroidSchedulers.mainThread())// Managed by LiveData
+                //.doOnSuccess { updateLiveData(Resource.success(dtoToDomain(it))) }
                 .doOnError { throwable -> updateLiveData(Resource.error(throwable.message, null, throwable)) }
                 .subscribe())
     }
@@ -53,7 +65,7 @@ abstract class NetworkBoundResource<ResultType> @MainThread protected constructo
      * Ensure LiveData is updated in Main/UI thread, and avoid useless notification.
      */
     @MainThread
-    private fun updateLiveData(newValue: Resource<ResultType>) {
+    private fun updateLiveData(newValue: Resource<Domain>) {
         if (!Objects.equals(result.value, newValue)) {
             result.value = newValue
         }
@@ -61,10 +73,16 @@ abstract class NetworkBoundResource<ResultType> @MainThread protected constructo
 
     @WorkerThread
     private fun fetchFromNetwork() {
+        Timber.e("fetchFromNetwork")
         addDisposable(createRemoteCall()
                 .subscribeOn(Schedulers.io())
                 .doOnSuccess {
-                    saveRemoteCallResult(it) // Save remote data in DB
+                    Timber.e("dto $it")
+                    val domain = dtoToDomain(it)
+                    Timber.e("Domain $domain")
+                    val entity = domainToEntity(domain)
+                    Timber.e("Entity $entity")
+                    saveRemoteCallResult(entity) // Save remote data in DB
                     startDatabaseLoading() // Wait DB dispatch to ensure the single source of truth
                 }
                 .doOnError { onFetchFailed() } // Remote error, retry policy to be defined in the child class
@@ -76,7 +94,7 @@ abstract class NetworkBoundResource<ResultType> @MainThread protected constructo
         )
     }
 
-    fun asLiveData(): LiveData<Resource<ResultType>> {
+    fun asLiveData(): LiveData<Resource<Domain>> {
         return result
     }
 
@@ -85,15 +103,23 @@ abstract class NetworkBoundResource<ResultType> @MainThread protected constructo
     }
 
     @WorkerThread
-    protected abstract fun saveRemoteCallResult(item: ResultType)
+    protected abstract fun saveRemoteCallResult(entity: Entity)
 
     @WorkerThread
-    protected abstract fun shouldFetch(data: ResultType?): Boolean
+    protected abstract fun shouldFetch(entity: Entity?): Boolean
 
     @MainThread
-    protected abstract fun loadFromDb(): Maybe<ResultType>
+    protected abstract fun loadFromDb(): Maybe<Entity>
 
     @WorkerThread
-    protected abstract fun createRemoteCall(): Maybe<ResultType>
+    protected abstract fun createRemoteCall(): Maybe<Dto>
 
+    @WorkerThread
+    protected abstract fun entityToDomain(entity: Entity?): Domain?
+
+    @WorkerThread
+    protected abstract fun domainToEntity(domain: Domain): Entity
+
+    @WorkerThread
+    protected abstract fun dtoToDomain(dto: Dto): Domain
 }

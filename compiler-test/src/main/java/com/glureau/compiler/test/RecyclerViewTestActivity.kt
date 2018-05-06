@@ -7,8 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.glureau.compiler.test.api.GithubApiService
-import com.glureau.compiler.test.model.SimpleGithubUser
-import com.glureau.compiler.test.model.data.SimpleGithubUserEntity
 import com.glureau.compiler.test.model.view.SimpleGithubUserBindingRecyclerViewAdapter
 import com.glureau.compiler.test.todo.GithubUserRepository
 import com.glureau.geno.db.GenoDatabase
@@ -39,7 +37,7 @@ class RecyclerViewTestActivity : AppCompatActivity() {
 
         val db = Room.databaseBuilder(applicationContext, GenoDatabase::class.java, "geno").build()
 
-        val repository = GithubUserRepository(api, db.simpleGithubUserDao(), TimedCacheManagerImpl<SimpleGithubUserEntity>(5 * 60 * 1000))
+        val repository = GithubUserRepository(api, db.simpleGithubUserDao(), TimedCacheManagerImpl(1 * 60 * 60 * 1000))
         repository.getMembers("google")
                 .observe(this, Observer {
                     if (it?.status == Resource.Companion.Status.LOADING

@@ -20,7 +20,7 @@ class NoCacheManagerImpl<in T : InternalEntity> : CacheManager<T> {
 class TimedCacheManagerImpl<in T : InternalEntity>(private val cacheDuration: Long) : CacheManager<T> {
     override fun useCacheDatabase() = true
     override fun shouldFetch(data: List<T>?): Boolean {
-        if (data == null) return true
+        if (data == null || data.isEmpty()) return true
         data.forEach {
             val lastUpdateTime = it._internal_update_date.time
             if (lastUpdateTime + cacheDuration < Calendar.getInstance().time.time) return true

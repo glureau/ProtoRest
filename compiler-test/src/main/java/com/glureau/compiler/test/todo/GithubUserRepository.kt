@@ -8,22 +8,27 @@ import com.glureau.geno.lib.network.CacheManager
 import com.glureau.geno.lib.repository.NetworkBoundResource
 import io.reactivex.Maybe
 
-class GithubUserRepository(val networkApi: GithubApiService, val dao: SimpleGithubUserDao, val cacheManager: CacheManager<SimpleGithubUser>) {
+class GithubUserRepository(val networkApi: GithubApiService, val dao: SimpleGithubUserDao, val cacheManager: CacheManager<SimpleGithubUserEntity>) {
 
-    fun getMembers(org: String) = object : NetworkBoundResource<List<SimpleGithubUser>>() {
-        override fun saveRemoteCallResult(item: List<SimpleGithubUser>) {
-            item.forEach {
-                dao.insertSimpleGithubUser(it.toEntity())
+    fun getMembers(org: String) = object : NetworkBoundResource<List<SimpleGithubUser>, List<SimpleGithubUserEntity>, List<SimpleGithubUser>>() {
+        override fun saveRemoteCallResult(entity: List<SimpleGithubUserEntity>) {
+            entity.forEach {
+                dao.insertSimpleGithubUser(it)
             }
         }
 
-        override fun shouldFetch(data: List<SimpleGithubUser>?): Boolean {
-            return cacheManager.shouldFetch(data)
+        override fun shouldFetch(entity: List<SimpleGithubUserEntity>?): Boolean {
+            return cacheManager.shouldFetch(entity)
         }
 
-        override fun loadFromDb(): Maybe<List<SimpleGithubUser>> {
+        override fun entityToDomain(entity: List<SimpleGithubUserEntity>?) = entity?.map { it.toDomain() }
+
+        override fun domainToEntity(domain: List<SimpleGithubUser>) = domain.map { it.toEntity() }
+
+        override fun dtoToDomain(dto: List<SimpleGithubUser>) = dto
+
+        override fun loadFromDb(): Maybe<List<SimpleGithubUserEntity>> {
             return dao.getSimpleGithubUsers()
-                    .map { entities -> entities.map { it.toDomain() } }
         }
 
         override fun createRemoteCall() = networkApi.getMembers(org)

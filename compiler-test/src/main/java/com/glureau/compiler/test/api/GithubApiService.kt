@@ -11,6 +11,6 @@ import retrofit2.http.Path
  */
 @RestApi
 interface GithubApiService {
-    @GET("orgs/{org}/members?per_page=1000")
+    @GET("orgs/{org}/members?per_page=100")
     fun getMembers(@Path("org") org: String): Maybe<List<SimpleGithubUser>>
 }
