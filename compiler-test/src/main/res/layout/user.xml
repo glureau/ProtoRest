@@ -7,7 +7,7 @@
 
         <variable
             name="githubUser"
-            type="com.glureau.compiler.test.model.GithubUser" />
+            type="com.glureau.compiler.test.api.dto.GithubUser" />
     </data>
 
     <android.support.constraint.ConstraintLayout

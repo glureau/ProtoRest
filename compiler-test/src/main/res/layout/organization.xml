@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
-            name="user"
-            type="com.glureau.compiler.test.api.dto.SimpleGithubUser" />
+            name="org"
+            type="com.glureau.compiler.test.api.dto.GithubOrganization" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -24,7 +23,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:visibility="visible"
-            app:glideLoadUrl="@{user.avatar_url}"
+            app:glideLoadUrl="@{org.avatar_url}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@color/colorAccent" />
@@ -35,23 +34,22 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="@{user.login}"
+            android:text="@{org.login}"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/geno_avatar_url"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="My Super Name" />
+            tools:text="Github" />
 
         <TextView
-            android:id="@+id/geno_html_url"
+            android:id="@+id/geno_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:autoLink="web"
-            android:text="@{user.html_url}"
+            android:text="@{org.description}"
             app:layout_constraintStart_toEndOf="@+id/geno_avatar_url"
             app:layout_constraintTop_toBottomOf="@+id/geno_login"
-            tools:text="https://glureau.com" />
+            tools:text="A great organization" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
