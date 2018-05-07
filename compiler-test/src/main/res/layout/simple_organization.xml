@@ -18,8 +18,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:orientation="vertical"
-        android:padding="4dp"
-        tools:background="@color/colorPrimaryDark">
+        android:padding="4dp">
 
         <ImageView
             android:id="@+id/geno_avatar_url"
@@ -33,7 +32,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@color/colorAccent" />
+            tools:src="@drawable/ic_launcher_background" />
 
         <TextView
             android:id="@+id/geno_login"
@@ -41,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@{org.login}"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -55,27 +54,37 @@
             android:id="@+id/geno_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:gravity="start"
             android:text="@{org.description}"
             android:textSize="14sp"
             android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/geno_avatar_url"
             app:layout_constraintTop_toBottomOf="@+id/geno_login"
             tools:text="A great organization can have a lot of things to describe and that's absolutely normal" />
 
-        <ImageButton
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_people_black_24dp"
-            android:textColor="@color/colorAccent"
-           app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/geno_avatar_url"
-            app:layout_constraintTop_toBottomOf="@+id/geno_description" />
+            app:layout_constraintTop_toBottomOf="@+id/geno_description">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="1dp"
+                android:background="@color/white"
+                android:padding="1dp"
+                android:src="@drawable/ic_people_black_24dp" />
+
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 </layout>
