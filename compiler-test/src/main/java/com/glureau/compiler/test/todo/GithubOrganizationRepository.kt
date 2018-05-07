@@ -2,42 +2,46 @@ package com.glureau.compiler.test.todo
 
 import com.glureau.compiler.test.api.GithubApiService
 import com.glureau.compiler.test.api.dto.GithubOrganization
+import com.glureau.compiler.test.api.dto.SimpleGithubOrganization
 import com.glureau.compiler.test.api.dto.data.GithubOrganizationDao
 import com.glureau.compiler.test.api.dto.data.GithubOrganizationEntity
+import com.glureau.compiler.test.api.dto.data.SimpleGithubOrganizationDao
+import com.glureau.compiler.test.api.dto.data.SimpleGithubOrganizationEntity
 import com.glureau.geno.lib.network.CacheManager
 import com.glureau.geno.lib.repository.NetworkBoundResource
 import io.reactivex.Maybe
 
 class GithubOrganizationRepository(val networkApi: GithubApiService,
-                                   val githubOrganizationDao: GithubOrganizationDao,
-                                   val organizationsCacheManager: CacheManager<GithubOrganizationEntity>) {
+                                   val githubOrganizationDao: SimpleGithubOrganizationDao,
+                                   val organizationsCacheManager: CacheManager<SimpleGithubOrganizationEntity>) {
 
-    fun getAllOrganizations() = object : NetworkBoundResource<List<GithubOrganization>, List<GithubOrganizationEntity>, List<GithubOrganization>>() {
-        override fun saveRemoteCallResult(entity: List<GithubOrganizationEntity>) {
+    fun getAllOrganizations() = object : NetworkBoundResource<List<SimpleGithubOrganization>, List<SimpleGithubOrganizationEntity>, List<SimpleGithubOrganization>>() {
+        override fun saveRemoteCallResult(entity: List<SimpleGithubOrganizationEntity>) {
             entity.forEach {
-                githubOrganizationDao.insertGithubOrganization(it)
+                githubOrganizationDao.insertSimpleGithubOrganization(it)
             }
         }
 
-        override fun shouldFetch(entity: List<GithubOrganizationEntity>?): Boolean {
+        override fun shouldFetch(entity: List<SimpleGithubOrganizationEntity>?): Boolean {
             return organizationsCacheManager.shouldFetch(entity)
         }
 
-        override fun entityToDomain(entity: List<GithubOrganizationEntity>?) = entity?.map { it.toDomain() }
+        override fun entityToDomain(entity: List<SimpleGithubOrganizationEntity>?) = entity?.map { it.toDomain() }
 
-        override fun domainToEntity(domain: List<GithubOrganization>) = domain.map { it.toEntity() }
+        override fun domainToEntity(domain: List<SimpleGithubOrganization>) = domain.map { it.toEntity() }
 
-        override fun dtoToDomain(dto: List<GithubOrganization>) = dto
+        override fun dtoToDomain(dto: List<SimpleGithubOrganization>) = dto
 
-        override fun loadFromDb(): Maybe<List<GithubOrganizationEntity>> {
-            return githubOrganizationDao.getGithubOrganizations()
+        override fun loadFromDb(): Maybe<List<SimpleGithubOrganizationEntity>> {
+            return githubOrganizationDao.getSimpleGithubOrganizations()
         }
 
         override fun createRemoteCall() = networkApi.getAllOrganizations()
     }.asLiveData()
 }
 
-fun GithubOrganization.toEntity() = GithubOrganizationEntity(
+fun SimpleGithubOrganization.toEntity() = SimpleGithubOrganizationEntity(
+        _internal_id = id,
         id = id,
         login = login,
         description = description,
@@ -45,13 +49,13 @@ fun GithubOrganization.toEntity() = GithubOrganizationEntity(
         avatar_url = avatar_url,
         events_url = events_url,
         members_url = members_url,
-        hooks_url = url,
+        hooks_url = hooks_url,
         issues_url = issues_url,
         public_members_url = public_members_url,
         repos_url = repos_url
 )
 
-fun GithubOrganizationEntity.toDomain() = GithubOrganization(
+fun SimpleGithubOrganizationEntity.toDomain() = SimpleGithubOrganization(
         id = id,
         login = login,
         description = description,
@@ -59,7 +63,7 @@ fun GithubOrganizationEntity.toDomain() = GithubOrganization(
         avatar_url = avatar_url,
         events_url = events_url,
         members_url = members_url,
-        hooks_url = url,
+        hooks_url = hooks_url,
         issues_url = issues_url,
         public_members_url = public_members_url,
         repos_url = repos_url

@@ -7,10 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.glureau.compiler.test.api.GithubApiService
-import com.glureau.compiler.test.api.dto.GithubOrganization
-import com.glureau.compiler.test.api.dto.SimpleGithubUser
-import com.glureau.compiler.test.api.dto.view.GithubOrganizationBindingRecyclerViewAdapter
-import com.glureau.compiler.test.api.dto.view.SimpleGithubUserBindingRecyclerViewAdapter
+import com.glureau.compiler.test.api.dto.view.SimpleGithubOrganizationBindingRecyclerViewAdapter
 import com.glureau.compiler.test.todo.GithubOrganizationRepository
 import com.glureau.geno.db.GenoDatabase
 import com.glureau.geno.lib.network.TimedCacheManagerImpl
@@ -58,13 +55,13 @@ class RecyclerViewTestActivity : AppCompatActivity() {
                 })
         */
 
-        val userRepository = GithubOrganizationRepository(api, db.githubOrganizationDao(), TimedCacheManagerImpl(24 * 60 * 60 * 1000))
+        val userRepository = GithubOrganizationRepository(api, db.simpleGithubOrganizationDao(), TimedCacheManagerImpl(24 * 60 * 60 * 1000))
         userRepository.getAllOrganizations()
                 .observe(this, Observer {
                     if (it?.status == Resource.Companion.Status.LOADING
                             || it?.status == Resource.Companion.Status.SUCCESS) {
                         val orgs = it.data?.toMutableList() ?: mutableListOf()
-                        recyclerView.adapter = GithubOrganizationBindingRecyclerViewAdapter(orgs)
+                        recyclerView.adapter = SimpleGithubOrganizationBindingRecyclerViewAdapter(orgs)
                     } else {
                         Timber.e("Issue happened: ${it?.message}")
                         val t = it?.throwable

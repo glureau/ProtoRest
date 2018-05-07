@@ -2,7 +2,8 @@ package com.glureau.geno.generators.data
 
 import com.glureau.geno.GeneratedClassInfo
 import com.glureau.geno.GeneratedClassesInfo
-import com.glureau.geno.annotation.db.InternalEntity
+import com.glureau.geno.annotation.data.Identifier
+import com.glureau.geno.annotation.data.InternalEntity
 import com.glureau.geno.utils.AndroidClasses
 import com.glureau.geno.utils.JavaToKotlinPrimitives
 import com.glureau.geno.utils.KotlinNullable
@@ -86,8 +87,15 @@ class EntityGenerator(private val messager: Messager) {
         file.writeTo(path)
 
         messager.printMessage(Diagnostic.Kind.NOTE, "Generated $entityClassName")
-        generatedClassesInfo.entity= GeneratedClassInfo(ClassName(packageName, entityClassName))
+        generatedClassesInfo.entity = GeneratedClassInfo(ClassName(packageName, entityClassName))
     }
+
+    // TODO Use this in repository generator
+    private fun getIdentifier(element: TypeElement) = element.enclosedElements
+            .filter { it.kind == ElementKind.FIELD }
+            .map { it as VariableElement }
+            .firstOrNull { it.getAnnotation(Identifier::class.java) != null }
+
 
     private fun addParameters(element: TypeElement, constructor: FunSpec.Builder, classBuilder: TypeSpec.Builder) {
         val fields = element.enclosedElements.filter { it.kind == ElementKind.FIELD /*&& it.modifiers.contains(Modifier.PUBLIC)*/ }.map { it as VariableElement }

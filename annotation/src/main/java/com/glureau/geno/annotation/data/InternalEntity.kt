@@ -1,4 +1,4 @@
-package com.glureau.geno.annotation.db
+package com.glureau.geno.annotation.data
 
 import java.util.*
 

@@ -1,6 +1,6 @@
 package com.glureau.geno.lib.network
 
-import com.glureau.geno.annotation.db.InternalEntity
+import com.glureau.geno.annotation.data.InternalEntity
 import java.util.*
 
 interface CacheManager<in T : InternalEntity> {

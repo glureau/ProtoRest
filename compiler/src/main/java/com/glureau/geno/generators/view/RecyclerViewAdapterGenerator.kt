@@ -70,8 +70,8 @@ class RecyclerViewAdapterGenerator(private val messager: Messager) {
                         .addModifiers(KModifier.OVERRIDE)
                         .addParameter("parent", AndroidClasses.VIEW_GROUP)
                         .addParameter("viewType", Int::class)
-                        .addStatement("return $holderClassName($bindingClassName.inflate(%T.from(parent.context)))", AndroidClasses.LAYOUT_INFLATER)
-                        .returns(ClassName(packageName, holderClassName))
+                        .addStatement("return $holderClassName($bindingClassName.inflate(%T.from(parent.context), parent, false))", AndroidClasses.LAYOUT_INFLATER)
+                         .returns(ClassName(packageName, holderClassName))
                         .build())
 
 
