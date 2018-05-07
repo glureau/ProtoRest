@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 
 
-class RecyclerViewTestActivity : AppCompatActivity() {
+class OrganizationsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -8,6 +8,11 @@
         <variable
             name="user"
             type="com.glureau.compiler.test.api.dto.SimpleGithubUser" />
+
+        <variable
+            name="router"
+            type="com.glureau.compiler.test.todo.Router" />
+
     </data>
 
     <android.support.constraint.ConstraintLayout

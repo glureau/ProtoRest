@@ -66,6 +66,7 @@ class ViewHolderGenerator(private val messager: Messager) {
                 .addFunction(FunSpec.builder("bind")
                         .addParameter(instanceName, className)
                         .addStatement("$bindingInstanceName.$xmlBindingName = $instanceName")
+                        .addStatement("$bindingInstanceName.router = com.glureau.compiler.test.todo.Router")
                         .addStatement("$bindingInstanceName.executePendingBindings()")
                         .build()
                 )

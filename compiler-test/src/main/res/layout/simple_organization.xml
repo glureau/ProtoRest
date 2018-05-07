@@ -8,6 +8,10 @@
         <variable
             name="org"
             type="com.glureau.compiler.test.api.dto.SimpleGithubOrganization" />
+
+        <variable
+            name="router"
+            type="com.glureau.compiler.test.todo.Router" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -81,6 +85,7 @@
                 android:layout_height="32dp"
                 android:layout_margin="1dp"
                 android:background="@color/white"
+                android:onClick="@{(theView) -> router.loadMembersActivity(theView, org.login)}"
                 android:padding="1dp"
                 android:src="@drawable/ic_people_black_24dp" />
 
