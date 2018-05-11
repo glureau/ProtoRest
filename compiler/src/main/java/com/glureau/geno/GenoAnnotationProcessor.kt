@@ -1,14 +1,19 @@
 package com.glureau.geno
 
-import com.glureau.geno.annotation.*
+import com.glureau.geno.annotation.Endpoint
+import com.glureau.geno.annotation.EndpointParam
+import com.glureau.geno.annotation.Image
+import com.glureau.geno.annotation.RestError
+import com.glureau.geno.annotation.data.ManyToMany
 import com.glureau.geno.annotation.network.RestApi
 import com.glureau.geno.annotation.storage.ViewModel
 import com.glureau.geno.annotation.view.CustomView
 import com.glureau.geno.generators.data.DaoGenerator
 import com.glureau.geno.generators.data.DatabaseGenerator
 import com.glureau.geno.generators.data.EntityGenerator
-import com.glureau.geno.generators.view.ViewHolderGenerator
+import com.glureau.geno.generators.data.ManyToManyEntityGenerator
 import com.glureau.geno.generators.view.RecyclerViewAdapterGenerator
+import com.glureau.geno.generators.view.ViewHolderGenerator
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asClassName
@@ -16,7 +21,6 @@ import org.w3c.dom.Document
 import java.io.File
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 import javax.xml.parsers.DocumentBuilderFactory
@@ -36,6 +40,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     private lateinit var entityGenerator: EntityGenerator
     private lateinit var daoGenerator: DaoGenerator
     private lateinit var databaseGenerator: DatabaseGenerator
+    private lateinit var manyToManyEntityGenerator: ManyToManyEntityGenerator
 
     private val generatedClassesInfos = mutableMapOf<ClassName, GeneratedClassesInfo>()
 
@@ -49,6 +54,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
         entityGenerator = EntityGenerator(messager)
         daoGenerator = DaoGenerator(messager)
         databaseGenerator = DatabaseGenerator(messager)
+        manyToManyEntityGenerator = ManyToManyEntityGenerator(messager)
     }
 
     companion object {
@@ -71,10 +77,16 @@ class GenoAnnotationProcessor : AbstractProcessor() {
         return false
     }
 
+
     private fun generateClasses(roundEnv: RoundEnvironment) {
-        val customViews = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as Set<TypeElement>? ?: return // Null : nothing to process
-        val viewModels = roundEnv.getElementsAnnotatedWith(ViewModel::class.java) as Set<TypeElement>? ?: return // Null : nothing to process
-        val restApis = roundEnv.getElementsAnnotatedWith(RestApi::class.java) as Set<TypeElement>? ?: return // Null : nothing to process
+        val customViews = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as Set<TypeElement>?
+                ?: return // Null : nothing to process
+        val viewModels = roundEnv.getElementsAnnotatedWith(ViewModel::class.java) as Set<TypeElement>?
+                ?: return // Null : nothing to process
+        val restApis = roundEnv.getElementsAnnotatedWith(RestApi::class.java) as Set<TypeElement>?
+                ?: return // Null : nothing to process
+        val relationships = roundEnv.getElementsAnnotatedWith(ManyToMany::class.java) as Set<TypeElement>?
+                ?: return // Null : nothing to process
         val outputDir = processingEnv.options["kapt.kotlin.generated"]
 
         for (it in customViews) {
@@ -88,8 +100,11 @@ class GenoAnnotationProcessor : AbstractProcessor() {
         for (it in viewModels) {
             val info = info(it)
             entityGenerator.generate(it, outputDir, info)
-            daoGenerator.generate(it, outputDir, info)
-
+            daoGenerator.generate(it, outputDir, info, relationships)
+        }
+        relationships.forEach {
+            val info = info(it)
+            manyToManyEntityGenerator.generate(it, outputDir, info)
         }
 
         databaseGenerator.generate(generatedClassesInfos, outputDir)

@@ -42,7 +42,7 @@ class RecyclerViewAdapterGenerator(private val messager: Messager) {
         val holderClassName = simpleClassName + "BindingHolder"
         val adapterClassName = simpleClassName + "BindingRecyclerViewAdapter"
 
-        val R = AnnotationHelper.getAnnotationClassValue(element, CustomView::class, "R")
+        val R = AnnotationHelper. getAnnotationClassValue(element, CustomView::class, "R")
         val viewName = element.getAnnotation(CustomView::class.java).viewName
 
         val projectPackage = R.toString().substring(0, R.toString().length - 2)

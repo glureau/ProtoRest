@@ -1,10 +1,7 @@
 package com.glureau.compiler.test.todo
 
 import com.glureau.compiler.test.api.GithubApiService
-import com.glureau.compiler.test.api.dto.GithubOrganization
 import com.glureau.compiler.test.api.dto.SimpleGithubOrganization
-import com.glureau.compiler.test.api.dto.data.GithubOrganizationDao
-import com.glureau.compiler.test.api.dto.data.GithubOrganizationEntity
 import com.glureau.compiler.test.api.dto.data.SimpleGithubOrganizationDao
 import com.glureau.compiler.test.api.dto.data.SimpleGithubOrganizationEntity
 import com.glureau.geno.lib.network.CacheManager

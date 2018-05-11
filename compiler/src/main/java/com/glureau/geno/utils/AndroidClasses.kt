@@ -39,5 +39,6 @@ object AndroidClasses {
     val ROOM_QUERY = ClassName("android.arch.persistence.room", "Query")
     val ROOM_DELETE = ClassName("android.arch.persistence.room", "Delete")
     val ROOM_TYPE_CONVERTERS = ClassName("android.arch.persistence.room", "TypeConverters")
+    val ROOM_INDEX = ClassName("android.arch.persistence.room", "Index")
 
 }

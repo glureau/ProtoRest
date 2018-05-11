@@ -37,7 +37,9 @@ class DatabaseGenerator(private val messager: Messager) {
 
     fun generate(generatedClasses: MutableMap<ClassName, GeneratedClassesInfo>, outputDir: String?) {
 
-        val entities = generatedClasses.values.map { it.entity?.className ?: error("Entity should not be null here!") }
+        val entities = generatedClasses.values.map {
+            it.entity?.className ?: error("Entity should not be null here!")
+        }
         val databaseName = "GenoDatabase"
         val packageName = "com.glureau.geno.db"
         val databaseClassName = ClassName(packageName, databaseName)
@@ -53,7 +55,7 @@ class DatabaseGenerator(private val messager: Messager) {
                         .build())
                 .addModifiers(KModifier.ABSTRACT)
 
-        val daos = generatedClasses.values.map { it.dao?.className ?: error("Dao should not be null here!") }
+        val daos = generatedClasses.values.map { it.dao }.filterNotNull().map { it.className }
         daos.forEach { dao ->
             classBuilder.addFunction(
                     FunSpec.builder(dao.simpleName().decapitalize())

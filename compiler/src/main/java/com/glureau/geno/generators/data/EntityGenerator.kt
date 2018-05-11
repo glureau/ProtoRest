@@ -4,7 +4,9 @@ import com.glureau.geno.GeneratedClassInfo
 import com.glureau.geno.GeneratedClassesInfo
 import com.glureau.geno.annotation.data.Identifier
 import com.glureau.geno.annotation.data.InternalEntity
+import com.glureau.geno.annotation.data.ManyToMany
 import com.glureau.geno.utils.AndroidClasses
+import com.glureau.geno.utils.AnnotationHelper
 import com.glureau.geno.utils.JavaToKotlinPrimitives
 import com.glureau.geno.utils.KotlinNullable
 import com.squareup.kotlinpoet.*
@@ -65,7 +67,7 @@ class EntityGenerator(private val messager: Messager) {
 
         constructor.addParameter(ParameterSpec
                 .builder(INTERNAL_UPDATE_DATE, Date::class)
-                .defaultValue("java.util.Calendar.getInstance().time")
+                .defaultValue("java.util.Date()")
                 .addModifiers(KModifier.OVERRIDE)
                 .build())
         classBuilder.addProperty(PropertySpec

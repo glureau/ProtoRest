@@ -7,7 +7,6 @@ import com.glureau.geno.utils.AndroidClasses.ROOM_DELETE
 import com.glureau.geno.utils.AndroidClasses.ROOM_INSERT
 import com.glureau.geno.utils.AndroidClasses.ROOM_ON_CONFLICT_STRATEGY_REPLACE
 import com.glureau.geno.utils.AndroidClasses.ROOM_QUERY
-import com.glureau.geno.utils.KotlinClasses
 import com.glureau.geno.utils.KotlinClasses.LIST
 import com.glureau.geno.utils.ReactivexClasses.MAYBE
 import com.squareup.kotlinpoet.*
@@ -36,7 +35,7 @@ class DaoGenerator(private val messager: Messager) {
 //    }
 
 
-    fun generate(element: TypeElement, outputDir: String?, generatedClassesInfo: GeneratedClassesInfo) {
+    fun generate(element: TypeElement, outputDir: String?, generatedClassesInfo: GeneratedClassesInfo, relationships: Set<TypeElement>) {
         val className = element.asClassName()
 
         val simpleClassName = className.simpleName()

@@ -4,7 +4,7 @@ import com.glureau.geno.annotation.data.Identifier
 import com.glureau.geno.annotation.storage.ViewModel
 import com.glureau.geno.annotation.view.CustomView
 import java.util.*
-
+/*
 //@CustomView(com.glureau.test.R::class, "simple_organization")
 @ViewModel
 data class GithubOrganization(@Identifier override val id: Long,
@@ -53,3 +53,4 @@ data class GithubOrganization(@Identifier override val id: Long,
         issues_url = issues_url,
         members_url = members_url,
         public_members_url = public_members_url)
+*/
