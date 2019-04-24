@@ -1,6 +1,6 @@
 package com.glureau.geno.lib.image.glide
 
-import android.databinding.BindingAdapter
+import androidx.databinding.BindingAdapter
 import android.view.View
 import android.widget.ImageView
 import com.glureau.geno.lib.GlideApp

@@ -73,26 +73,25 @@ class GenoAnnotationProcessor : AbstractProcessor() {
     }
 
     override fun process(annotations: Set<TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        generateClasses(roundEnv)
-        return false
+        return generateClasses(roundEnv)
     }
 
 
-    private fun generateClasses(roundEnv: RoundEnvironment) {
+    private fun generateClasses(roundEnv: RoundEnvironment): Boolean {
         val customViews = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as Set<TypeElement>?
-                ?: return // Null : nothing to process
+                ?: return false // Null : nothing to process
         val viewModels = roundEnv.getElementsAnnotatedWith(ViewModel::class.java) as Set<TypeElement>?
-                ?: return // Null : nothing to process
+                ?: return false // Null : nothing to process
         val restApis = roundEnv.getElementsAnnotatedWith(RestApi::class.java) as Set<TypeElement>?
-                ?: return // Null : nothing to process
+                ?: return false // Null : nothing to process
         val relationships = roundEnv.getElementsAnnotatedWith(ManyToMany::class.java) as Set<TypeElement>?
-                ?: return // Null : nothing to process
+                ?: return false // Null : nothing to process
         val outputDir = processingEnv.options["kapt.kotlin.generated"]
 
         for (it in customViews) {
-            if (useAndroidBinding(it)) {
+            if (useAndroidBinding(it, outputDir)) {
                 val info = info(it)
-                viewHolderGenerator.generate(it, xmlCustomLayout(it).second, outputDir, info)
+                viewHolderGenerator.generate(it, xmlCustomLayout(it, outputDir).second, outputDir, info)
                 recyclerViewAdapterGenerator.generate(it, outputDir, info)
             }
         }
@@ -102,12 +101,13 @@ class GenoAnnotationProcessor : AbstractProcessor() {
             entityGenerator.generate(it, outputDir, info)
             daoGenerator.generate(it, outputDir, info, relationships)
         }
+
         relationships.forEach {
             val info = info(it)
             manyToManyEntityGenerator.generate(it, outputDir, info)
         }
-
         databaseGenerator.generate(generatedClassesInfos, outputDir)
+        return true
     }
 
     private fun info(elem: TypeElement): GeneratedClassesInfo {
@@ -119,9 +119,9 @@ class GenoAnnotationProcessor : AbstractProcessor() {
         return info
     }
 
-    private fun useAndroidBinding(element: TypeElement): Boolean {
+    private fun useAndroidBinding(element: TypeElement, outputDir: String?): Boolean {
         val className = element.asClassName()
-        val (xmlLayoutFile, xmlDoc) = xmlCustomLayout(element)
+        val (xmlLayoutFile, xmlDoc) = xmlCustomLayout(element, outputDir)
         if (xmlDoc.documentElement.nodeName != "layout") {
             messager.printMessage(Diagnostic.Kind.WARNING, "$className is not using Android Data Binding ($xmlLayoutFile should start with 'layout' but starts with '${xmlDoc.documentElement.nodeName}'")
             return false
@@ -129,9 +129,11 @@ class GenoAnnotationProcessor : AbstractProcessor() {
         return true
     }
 
-    private fun xmlCustomLayout(element: TypeElement): Pair<File, Document> {
+    private fun xmlCustomLayout(element: TypeElement, outputDir: String?): Pair<File, Document> {
         val viewName = element.getAnnotation(CustomView::class.java).viewName
-        val xmlLayoutFile = File("compiler-test/src/main/res/layout/$viewName.xml")
+        System.out.println("xmlCustomLayout")
+        System.out.println(outputDir)
+        val xmlLayoutFile = File("${outputDir?.substringBefore("compiler-test")}/compiler-test/src/main/res/layout/$viewName.xml")
         val xmlDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlLayoutFile)
         return Pair(xmlLayoutFile, xmlDoc)
     }

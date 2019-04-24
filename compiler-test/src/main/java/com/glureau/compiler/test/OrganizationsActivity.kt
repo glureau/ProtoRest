@@ -1,11 +1,11 @@
 package com.glureau.compiler.test
 
-import android.arch.lifecycle.Observer
-import android.arch.persistence.room.Room
+import androidx.lifecycle.Observer
+import androidx.room.Room
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.glureau.compiler.test.api.GithubApiService
 import com.glureau.compiler.test.api.dto.view.SimpleGithubOrganizationBindingRecyclerViewAdapter
 import com.glureau.compiler.test.todo.GithubOrganizationRepository

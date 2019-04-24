@@ -40,10 +40,9 @@ class ManyToManyEntityGenerator(private val messager: Messager) {
 
 
     fun generate(relationship: TypeElement, outputDir: String?, info: GeneratedClassesInfo) {
+
         val referenceClassA = AnnotationHelper.getAnnotationClassValue(relationship, ManyToMany::class, "referenceClassA").toString()
         val referenceClassB = AnnotationHelper.getAnnotationClassValue(relationship, ManyToMany::class, "referenceClassB").toString()
-        messager.printMessage(Diagnostic.Kind.ERROR, "referenceClassA: $referenceClassA")
-        messager.printMessage(Diagnostic.Kind.ERROR, "referenceClassB: $referenceClassB")
         val packageA = referenceClassA.substringBeforeLast(".")
         val classNameStrA = referenceClassA.substringAfterLast(".")
         val classNameA = ClassName(packageA, classNameStrA)
@@ -52,7 +51,7 @@ class ManyToManyEntityGenerator(private val messager: Messager) {
         val classNameB = ClassName(packageB, classNameStrB)
 
         val manyToManyClassNameStr = classNameStrA + "_to_" + classNameStrB
-        val manyToManyPackage = packageA + ".data"
+        val manyToManyPackage = "$packageA.data"
         val manyToManyClassName = ClassName(manyToManyPackage, manyToManyClassNameStr)
 
         val classBuilder = TypeSpec.classBuilder(manyToManyClassName)
@@ -60,17 +59,17 @@ class ManyToManyEntityGenerator(private val messager: Messager) {
                 .addAnnotation(AnnotationSpec.builder(AndroidClasses.ROOM_ENTITY)
                         .addMember("tableName", "\"$manyToManyClassNameStr\"")
                         .addMember("indices", "arrayOf(\n" +
-                                "        android.arch.persistence.room.Index(value = arrayOf(\"${classNameStrA}_id\", \"${classNameStrB}_id\"), unique = true),\n" +
-                                "        android.arch.persistence.room.Index(value = \"${classNameStrA}_id\", unique = false),\n" +
-                                "        android.arch.persistence.room.Index(value = \"${classNameStrB}_id\", unique = false)\n" +
+                                "        androidx.room.Index(value = arrayOf(\"${classNameStrA}_id\", \"${classNameStrB}_id\"), unique = true),\n" +
+                                "        androidx.room.Index(value = arrayOf(\"${classNameStrA}_id\"), unique = false),\n" +
+                                "        androidx.room.Index(value = arrayOf(\"${classNameStrB}_id\"), unique = false)\n" +
                                 ")")
 
                         .addMember("foreignKeys", "arrayOf(\n" +
-                                "android.arch.persistence.room.ForeignKey(entity = $packageA.data.${classNameStrA}Entity::class,\n" +
+                                "androidx.room.ForeignKey(entity = $packageA.data.${classNameStrA}Entity::class,\n" +
                                 "parentColumns = arrayOf(\"_internal_id\"),\n" +
                                 "childColumns =  arrayOf(\"${classNameStrA}_id\")\n" +
                                 "),\n" +
-                                "android.arch.persistence.room.ForeignKey(entity = $packageB.data.${classNameStrB}Entity::class,\n" +
+                                "androidx.room.ForeignKey(entity = $packageB.data.${classNameStrB}Entity::class,\n" +
                                 "parentColumns = arrayOf(\"_internal_id\"),\n" +
                                 "childColumns =  arrayOf(\"${classNameStrB}_id\")\n" +
                                 ")\n" +
@@ -116,7 +115,8 @@ class ManyToManyEntityGenerator(private val messager: Messager) {
         val path = File(outputDir)
         file.writeTo(path)
 
-        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $manyToManyClassNameStr")
         info.entity = GeneratedClassInfo(manyToManyClassName)
+        messager.printMessage(Diagnostic.Kind.NOTE, "Generated $manyToManyClassNameStr")
+
     }
 }

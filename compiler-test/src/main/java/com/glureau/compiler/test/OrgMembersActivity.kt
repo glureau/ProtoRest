@@ -1,11 +1,11 @@
 package com.glureau.compiler.test
 
-import android.arch.lifecycle.Observer
-import android.arch.persistence.room.Room
+import androidx.lifecycle.Observer
+import androidx.room.Room
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.glureau.compiler.test.api.GithubApiService
 import com.glureau.compiler.test.api.dto.view.SimpleGithubUserBindingRecyclerViewAdapter
 import com.glureau.compiler.test.todo.GithubUserRepository
@@ -27,8 +27,8 @@ class OrgMembersActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val recyclerView: RecyclerView = layoutInflater.inflate(R.layout.recyclerview, null) as RecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        val recyclerView: androidx.recyclerview.widget.RecyclerView = layoutInflater.inflate(R.layout.recyclerview, null) as androidx.recyclerview.widget.RecyclerView
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         setContentView(recyclerView)
 
         val retrofit = Retrofit.Builder()
