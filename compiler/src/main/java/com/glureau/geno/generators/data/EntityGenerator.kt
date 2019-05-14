@@ -92,12 +92,6 @@ class EntityGenerator(private val messager: Messager) {
         generatedClassesInfo.entity = GeneratedClassInfo(ClassName(packageName, entityClassName))
     }
 
-    // TODO Use this in repository generator
-    private fun getIdentifier(element: TypeElement) = element.enclosedElements
-            .filter { it.kind == ElementKind.FIELD }
-            .map { it as VariableElement }
-            .firstOrNull { it.getAnnotation(Identifier::class.java) != null }
-
 
     private fun addParameters(element: TypeElement, constructor: FunSpec.Builder, classBuilder: TypeSpec.Builder) {
         val fields = element.enclosedElements.filter { it.kind == ElementKind.FIELD /*&& it.modifiers.contains(Modifier.PUBLIC)*/ }.map { it as VariableElement }

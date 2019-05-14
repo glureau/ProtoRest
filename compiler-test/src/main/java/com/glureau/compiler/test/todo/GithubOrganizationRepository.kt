@@ -38,8 +38,6 @@ class GithubOrganizationRepository(val networkApi: GithubApiService,
 }
 
 fun SimpleGithubOrganization.toEntity() = SimpleGithubOrganizationEntity(
-        _internal_id = id,
-        id = id,
         login = login,
         description = description,
         url = url,
@@ -53,7 +51,6 @@ fun SimpleGithubOrganization.toEntity() = SimpleGithubOrganizationEntity(
 )
 
 fun SimpleGithubOrganizationEntity.toDomain() = SimpleGithubOrganization(
-        id = id,
         login = login,
         description = description,
         url = url,

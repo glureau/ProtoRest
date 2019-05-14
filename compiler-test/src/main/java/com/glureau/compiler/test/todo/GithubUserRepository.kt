@@ -2,6 +2,7 @@ package com.glureau.compiler.test.todo
 
 import com.glureau.compiler.test.api.GithubApiService
 import com.glureau.compiler.test.api.dto.SimpleGithubUser
+import com.glureau.compiler.test.api.dto.data.SimpleGithubOrganization_to_SimpleGithubUser
 import com.glureau.compiler.test.api.dto.data.SimpleGithubUserDao
 import com.glureau.compiler.test.api.dto.data.SimpleGithubUserEntity
 import com.glureau.geno.lib.network.CacheManager
@@ -15,7 +16,8 @@ class GithubUserRepository(val networkApi: GithubApiService,
     fun getMembers(org: String) = object : NetworkBoundResource<List<SimpleGithubUser>, List<SimpleGithubUserEntity>, List<SimpleGithubUser>>() {
         override fun saveRemoteCallResult(entity: List<SimpleGithubUserEntity>) {
             entity.forEach {
-                simpleGithubUserDao.insertSimpleGithubUser(it)
+                simpleGithubUserDao.insertSimpleGithubUser(it)//TODO: coupling with the org
+                simpleGithubUserDao.insertSimpleGithubOrganization_to_SimpleGithubUser(SimpleGithubOrganization_to_SimpleGithubUser(SimpleGithubOrganization_id = org ))
             }
         }
 
@@ -30,7 +32,7 @@ class GithubUserRepository(val networkApi: GithubApiService,
         override fun dtoToDomain(dto: List<SimpleGithubUser>) = dto
 
         override fun loadFromDb(): Maybe<List<SimpleGithubUserEntity>> {
-            return simpleGithubUserDao.getSimpleGithubUsers()
+            return simpleGithubUserDao.getSimpleGithubUserByOrgs(org)//TODO: fetching users based on the org
         }
 
         override fun createRemoteCall() = networkApi.getMembers(org)
@@ -39,14 +41,12 @@ class GithubUserRepository(val networkApi: GithubApiService,
 }
 
 fun SimpleGithubUser.toEntity() = SimpleGithubUserEntity(
-        id = id,
         login = login,
         avatar_url = avatar_url,
         html_url = html_url
 )
 
 fun SimpleGithubUserEntity.toDomain() = SimpleGithubUser(
-        id = id,
         login = login,
         avatar_url = avatar_url,
         html_url = html_url

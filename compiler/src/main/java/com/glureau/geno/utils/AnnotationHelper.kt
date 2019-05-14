@@ -1,8 +1,7 @@
 package com.glureau.geno.utils
 
-import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.element.AnnotationValue
-import javax.lang.model.element.TypeElement
+import com.glureau.geno.annotation.data.Identifier
+import javax.lang.model.element.*
 import javax.lang.model.type.TypeMirror
 import kotlin.reflect.KClass
 
@@ -35,4 +34,10 @@ object AnnotationHelper {
             av.value as TypeMirror
         }
     }
+
+    fun getIdentifier(element: TypeElement) = element.enclosedElements
+            .filter { it.kind == ElementKind.FIELD }
+            .map { it as VariableElement }
+            .firstOrNull { it.getAnnotation(Identifier::class.java) != null }
+
 }

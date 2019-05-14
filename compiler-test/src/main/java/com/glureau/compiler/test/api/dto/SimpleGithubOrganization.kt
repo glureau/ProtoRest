@@ -6,8 +6,7 @@ import com.glureau.geno.annotation.view.CustomView
 
 @CustomView(com.glureau.test.R::class, "simple_organization")
 @ViewModel
-open class SimpleGithubOrganization(@Identifier open val id: Long,
-                                    open val login: String,
+open class SimpleGithubOrganization(@Identifier open val login: String,
                                     open val description: String?,
                                     open val avatar_url: String?,
                                     open val url: String?,

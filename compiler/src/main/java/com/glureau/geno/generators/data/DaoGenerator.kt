@@ -7,7 +7,10 @@ import com.glureau.geno.utils.AndroidClasses.ROOM_DELETE
 import com.glureau.geno.utils.AndroidClasses.ROOM_INSERT
 import com.glureau.geno.utils.AndroidClasses.ROOM_ON_CONFLICT_STRATEGY_REPLACE
 import com.glureau.geno.utils.AndroidClasses.ROOM_QUERY
+import com.glureau.geno.utils.AnnotationHelper
+import com.glureau.geno.utils.JavaToKotlinPrimitives
 import com.glureau.geno.utils.KotlinClasses.LIST
+import com.glureau.geno.utils.KotlinNullable
 import com.glureau.geno.utils.ReactivexClasses.MAYBE
 import com.squareup.kotlinpoet.*
 import java.io.File
@@ -44,20 +47,38 @@ class DaoGenerator(private val messager: Messager) {
         val entityClassName = ClassName(packageName, entityName)
         val daoName = simpleClassName + "Dao"
 
+        val identifier = AnnotationHelper.getIdentifier(element) ?: error("foo")
 
         val classBuilder = TypeSpec.interfaceBuilder(daoName)
                 .addAnnotation(ROOM_DAO)
 
         classBuilder.addFunction(
-                FunSpec.builder("get${simpleClassName}ById")
+                FunSpec.builder("get${simpleClassName}By" + identifier.simpleName.toString().capitalize())
                         .addModifiers(KModifier.ABSTRACT)
-                        .addParameter("id", Long::class)
+                        .addParameter(identifier.simpleName.toString(), JavaToKotlinPrimitives.transformIfPrimitive(KotlinNullable.typeName(identifier)))
                         .returns(MAYBE(entityClassName))
                         .addAnnotation(AnnotationSpec.builder(ROOM_QUERY)
-                                .addMember("value", "\"SELECT * FROM $simpleClassName WHERE id = :id\"")
+                                .addMember("value", "\"SELECT * FROM $simpleClassName WHERE ${identifier.simpleName} = :${identifier.simpleName}\"")
                                 .build())
                         .build()
         )
+
+        //TODO: generify
+        if (simpleClassName.contains("User")) {
+            classBuilder.addFunction(
+                    FunSpec.builder("get${simpleClassName}ByOrgs")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .addParameter("orgs", String::class)
+                            .returns(MAYBE(LIST(entityClassName)))
+                            .addAnnotation(AnnotationSpec.builder(ROOM_QUERY)
+                                    .addMember("value", "\"SELECT a.* FROM $simpleClassName a " +
+                                            "INNER JOIN SimpleGithubOrganization_to_SimpleGithubUser b ON a._internal_id=b.${simpleClassName}_id " +
+                                            "INNER JOIN SimpleGithubOrganization c ON c._internal_id=b.SimpleGithubOrganization_id " +
+                                            "WHERE c.login = :orgs\"")
+                                    .build())
+                            .build()
+            )
+        }
 
 //        @Query("SELECT * FROM SimpleGithubUser")
 //        fun getSimpleGithubUsers(): Maybe<List<SimpleGithubUserEntity>>
@@ -81,6 +102,17 @@ class DaoGenerator(private val messager: Messager) {
                                 .build())
                         .build()
         )
+        if (simpleClassName.contains("User")) {
+            classBuilder.addFunction(
+                    FunSpec.builder("insertSimpleGithubOrganization_to_SimpleGithubUser")
+                            .addModifiers(KModifier.ABSTRACT)
+                            .addParameter("manyToManyJoin", ClassName(packageName, "SimpleGithubOrganization_to_SimpleGithubUser"))
+                            .addAnnotation(AnnotationSpec.builder(ROOM_INSERT)
+                                    .addMember("onConflict", "%T", ROOM_ON_CONFLICT_STRATEGY_REPLACE)
+                                    .build())
+                            .build()
+            )
+        }
 
         classBuilder.addFunction(
                 FunSpec.builder("delete$simpleClassName")
