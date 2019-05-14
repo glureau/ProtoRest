@@ -14,6 +14,7 @@ import com.glureau.geno.generators.data.EntityGenerator
 import com.glureau.geno.generators.data.ManyToManyEntityGenerator
 import com.glureau.geno.generators.view.RecyclerViewAdapterGenerator
 import com.glureau.geno.generators.view.ViewHolderGenerator
+import com.glureau.geno.scan.Scanner
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asClassName
@@ -78,6 +79,7 @@ class GenoAnnotationProcessor : AbstractProcessor() {
 
 
     private fun generateClasses(roundEnv: RoundEnvironment): Boolean {
+        val scanResult = Scanner.scan(roundEnv, messager)
         val customViews = roundEnv.getElementsAnnotatedWith(CustomView::class.java) as Set<TypeElement>?
                 ?: return false // Null : nothing to process
         val viewModels = roundEnv.getElementsAnnotatedWith(ViewModel::class.java) as Set<TypeElement>?
